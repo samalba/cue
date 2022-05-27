@@ -14,129 +14,78 @@ func init() {
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
-	Native: []*internal.Builtin{{
-		Name: "Valid",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-		},
-		Result: adt.BottomKind,
-		Func: func(c *internal.CallCtxt) {
+	Funcs: map[string]func(c *internal.CallCtxt){
+		"Valid": func(c *internal.CallCtxt) {
+
 			s := c.String(0)
 			if c.Do() {
 				c.Ret = Valid(s)
 			}
 		},
-	}, {
-		Name: "Parse",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"Parse": func(c *internal.CallCtxt) {
+
 			s := c.String(0)
 			if c.Do() {
 				c.Ret, c.Err = Parse(s)
 			}
 		},
-	}, {
-		Name: "ToString",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"ToString": func(c *internal.CallCtxt) {
+
 			x := c.String(0)
 			if c.Do() {
 				c.Ret = ToString(x)
 			}
 		},
-	}, {
-		Name: "URN",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"URN": func(c *internal.CallCtxt) {
+
 			x := c.String(0)
 			if c.Do() {
 				c.Ret, c.Err = URN(x)
 			}
 		},
-	}, {
-		Name: "FromInt",
-		Params: []internal.Param{
-			{Kind: adt.IntKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"FromInt": func(c *internal.CallCtxt) {
+
 			i := c.BigInt(0)
 			if c.Do() {
 				c.Ret, c.Err = FromInt(i)
 			}
 		},
-	}, {
-		Name: "ToInt",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-		},
-		Result: adt.IntKind,
-		Func: func(c *internal.CallCtxt) {
+		"ToInt": func(c *internal.CallCtxt) {
+
 			x := c.String(0)
 			if c.Do() {
 				c.Ret = ToInt(x)
 			}
 		},
-	}, {
-		Name: "Variant",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-		},
-		Result: adt.IntKind,
-		Func: func(c *internal.CallCtxt) {
+		"Variant": func(c *internal.CallCtxt) {
+
 			x := c.String(0)
 			if c.Do() {
 				c.Ret, c.Err = Variant(x)
 			}
 		},
-	}, {
-		Name: "Version",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-		},
-		Result: adt.IntKind,
-		Func: func(c *internal.CallCtxt) {
+		"Version": func(c *internal.CallCtxt) {
+
 			x := c.String(0)
 			if c.Do() {
 				c.Ret, c.Err = Version(x)
 			}
 		},
-	}, {
-		Name: "SHA1",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-			{Kind: adt.BytesKind | adt.StringKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"SHA1": func(c *internal.CallCtxt) {
+
 			space, data := c.String(0), c.Bytes(1)
 			if c.Do() {
 				c.Ret, c.Err = SHA1(space, data)
 			}
 		},
-	}, {
-		Name: "MD5",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-			{Kind: adt.BytesKind | adt.StringKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"MD5": func(c *internal.CallCtxt) {
+
 			space, data := c.String(0), c.Bytes(1)
 			if c.Do() {
 				c.Ret, c.Err = MD5(space, data)
 			}
 		},
-	}},
+	},
 	CUE: `{
 	ns: {
 		DNS:  "6ba7b810-9dad-11d1-80b4-00c04fd430c8"
@@ -144,6 +93,84 @@ var pkg = &internal.Package{
 		OID:  "6ba7b812-9dad-11d1-80b4-00c04fd430c8"
 		X500: "6ba7b814-9dad-11d1-80b4-00c04fd430c8"
 		Nil:  "00000000-0000-0000-0000-000000000000"
+	}
+	exports: {
+		Version: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: string
+			}]
+			out: >=-9223372036854775808 & <=9223372036854775807 & int
+		}
+		Variant: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: string
+			}]
+			out: >=-9223372036854775808 & <=9223372036854775807 & int
+		}
+		URN: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: string
+			}]
+			out: string
+		}
+		ToString: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: string
+			}]
+			out: string
+		}
+		ToInt: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: string
+			}]
+			out: int
+		}
+		SHA1: {
+			in: [...#Arg] & [{
+				name: "space"
+				type: string
+			}, {
+				name: "data"
+				type: bytes | string
+			}]
+			out: string
+		}
+		Parse: {
+			in: [...#Arg] & [{
+				name: "s"
+				type: string
+			}]
+			out: string
+		}
+		MD5: {
+			in: [...#Arg] & [{
+				name: "space"
+				type: string
+			}, {
+				name: "data"
+				type: bytes | string
+			}]
+			out: string
+		}
+		FromInt: {
+			in: [...#Arg] & [{
+				name: "i"
+				type: int
+			}]
+			out: string
+		}
+		Valid: {
+			in: [...#Arg] & [{
+				name: "s"
+				type: string
+			}]
+			out: _
+		}
 	}
 	variants: {
 		Invalid:   0

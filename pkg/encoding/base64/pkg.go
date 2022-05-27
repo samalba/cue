@@ -14,57 +14,79 @@ func init() {
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
-	Native: []*internal.Builtin{{
-		Name: "EncodedLen",
-		Params: []internal.Param{
-			{Kind: adt.TopKind},
-			{Kind: adt.IntKind},
-		},
-		Result: adt.IntKind,
-		Func: func(c *internal.CallCtxt) {
+	Funcs: map[string]func(c *internal.CallCtxt){
+		"EncodedLen": func(c *internal.CallCtxt) {
+
 			encoding, n := c.Value(0), c.Int(1)
 			if c.Do() {
 				c.Ret, c.Err = EncodedLen(encoding, n)
 			}
 		},
-	}, {
-		Name: "DecodedLen",
-		Params: []internal.Param{
-			{Kind: adt.TopKind},
-			{Kind: adt.IntKind},
-		},
-		Result: adt.IntKind,
-		Func: func(c *internal.CallCtxt) {
+		"DecodedLen": func(c *internal.CallCtxt) {
+
 			encoding, x := c.Value(0), c.Int(1)
 			if c.Do() {
 				c.Ret, c.Err = DecodedLen(encoding, x)
 			}
 		},
-	}, {
-		Name: "Encode",
-		Params: []internal.Param{
-			{Kind: adt.TopKind},
-			{Kind: adt.BytesKind | adt.StringKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"Encode": func(c *internal.CallCtxt) {
+
 			encoding, src := c.Value(0), c.Bytes(1)
 			if c.Do() {
 				c.Ret, c.Err = Encode(encoding, src)
 			}
 		},
-	}, {
-		Name: "Decode",
-		Params: []internal.Param{
-			{Kind: adt.TopKind},
-			{Kind: adt.StringKind},
-		},
-		Result: adt.BytesKind | adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"Decode": func(c *internal.CallCtxt) {
+
 			encoding, s := c.Value(0), c.String(1)
 			if c.Do() {
 				c.Ret, c.Err = Decode(encoding, s)
 			}
 		},
-	}},
+	},
+	CUE: `{
+	_
+	exports: {
+		EncodedLen: {
+			in: [...#Arg] & [{
+				name: "encoding"
+				type: _
+			}, {
+				name: "n"
+				type: >=-9223372036854775808 & <=9223372036854775807 & int
+			}]
+			out: >=-9223372036854775808 & <=9223372036854775807 & int
+		}
+		Encode: {
+			in: [...#Arg] & [{
+				name: "encoding"
+				type: _
+			}, {
+				name: "src"
+				type: bytes | string
+			}]
+			out: string
+		}
+		DecodedLen: {
+			in: [...#Arg] & [{
+				name: "encoding"
+				type: _
+			}, {
+				name: "x"
+				type: >=-9223372036854775808 & <=9223372036854775807 & int
+			}]
+			out: >=-9223372036854775808 & <=9223372036854775807 & int
+		}
+		Decode: {
+			in: [...#Arg] & [{
+				name: "encoding"
+				type: _
+			}, {
+				name: "s"
+				type: string
+			}]
+			out: bytes | string
+		}
+	}
+}`,
 }

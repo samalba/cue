@@ -14,220 +14,238 @@ func init() {
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
-	Native: []*internal.Builtin{{
-		Name: "SplitHostPort",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-		},
-		Result: adt.ListKind,
-		Func: func(c *internal.CallCtxt) {
+	Funcs: map[string]func(c *internal.CallCtxt){
+		"SplitHostPort": func(c *internal.CallCtxt) {
 			s := c.String(0)
 			if c.Do() {
 				c.Ret, c.Err = SplitHostPort(s)
 			}
 		},
-	}, {
-		Name: "JoinHostPort",
-		Params: []internal.Param{
-			{Kind: adt.TopKind},
-			{Kind: adt.TopKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"JoinHostPort": func(c *internal.CallCtxt) {
 			host, port := c.Value(0), c.Value(1)
 			if c.Do() {
 				c.Ret, c.Err = JoinHostPort(host, port)
 			}
 		},
-	}, {
-		Name: "FQDN",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-		},
-		Result: adt.BoolKind,
-		Func: func(c *internal.CallCtxt) {
+		"FQDN": func(c *internal.CallCtxt) {
 			s := c.String(0)
 			if c.Do() {
 				c.Ret = FQDN(s)
 			}
 		},
-	}, {
-		Name:  "IPv4len",
-		Const: "4",
-	}, {
-		Name:  "IPv6len",
-		Const: "16",
-	}, {
-		Name: "ParseIP",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-		},
-		Result: adt.ListKind,
-		Func: func(c *internal.CallCtxt) {
+		"ParseIP": func(c *internal.CallCtxt) {
 			s := c.String(0)
 			if c.Do() {
 				c.Ret, c.Err = ParseIP(s)
 			}
 		},
-	}, {
-		Name: "IPv4",
-		Params: []internal.Param{
-			{Kind: adt.TopKind},
-		},
-		Result: adt.BoolKind,
-		Func: func(c *internal.CallCtxt) {
+		"IPv4": func(c *internal.CallCtxt) {
 			ip := c.Value(0)
 			if c.Do() {
 				c.Ret = IPv4(ip)
 			}
 		},
-	}, {
-		Name: "IP",
-		Params: []internal.Param{
-			{Kind: adt.TopKind},
-		},
-		Result: adt.BoolKind,
-		Func: func(c *internal.CallCtxt) {
+		"IP": func(c *internal.CallCtxt) {
 			ip := c.Value(0)
 			if c.Do() {
 				c.Ret = IP(ip)
 			}
 		},
-	}, {
-		Name: "IPCIDR",
-		Params: []internal.Param{
-			{Kind: adt.TopKind},
-		},
-		Result: adt.BoolKind,
-		Func: func(c *internal.CallCtxt) {
+		"IPCIDR": func(c *internal.CallCtxt) {
 			ip := c.Value(0)
 			if c.Do() {
 				c.Ret, c.Err = IPCIDR(ip)
 			}
 		},
-	}, {
-		Name: "LoopbackIP",
-		Params: []internal.Param{
-			{Kind: adt.TopKind},
-		},
-		Result: adt.BoolKind,
-		Func: func(c *internal.CallCtxt) {
+		"LoopbackIP": func(c *internal.CallCtxt) {
 			ip := c.Value(0)
 			if c.Do() {
 				c.Ret = LoopbackIP(ip)
 			}
 		},
-	}, {
-		Name: "MulticastIP",
-		Params: []internal.Param{
-			{Kind: adt.TopKind},
-		},
-		Result: adt.BoolKind,
-		Func: func(c *internal.CallCtxt) {
+		"MulticastIP": func(c *internal.CallCtxt) {
 			ip := c.Value(0)
 			if c.Do() {
 				c.Ret = MulticastIP(ip)
 			}
 		},
-	}, {
-		Name: "InterfaceLocalMulticastIP",
-		Params: []internal.Param{
-			{Kind: adt.TopKind},
-		},
-		Result: adt.BoolKind,
-		Func: func(c *internal.CallCtxt) {
+		"InterfaceLocalMulticastIP": func(c *internal.CallCtxt) {
 			ip := c.Value(0)
 			if c.Do() {
 				c.Ret = InterfaceLocalMulticastIP(ip)
 			}
 		},
-	}, {
-		Name: "LinkLocalMulticastIP",
-		Params: []internal.Param{
-			{Kind: adt.TopKind},
-		},
-		Result: adt.BoolKind,
-		Func: func(c *internal.CallCtxt) {
+		"LinkLocalMulticastIP": func(c *internal.CallCtxt) {
 			ip := c.Value(0)
 			if c.Do() {
 				c.Ret = LinkLocalMulticastIP(ip)
 			}
 		},
-	}, {
-		Name: "LinkLocalUnicastIP",
-		Params: []internal.Param{
-			{Kind: adt.TopKind},
-		},
-		Result: adt.BoolKind,
-		Func: func(c *internal.CallCtxt) {
+		"LinkLocalUnicastIP": func(c *internal.CallCtxt) {
 			ip := c.Value(0)
 			if c.Do() {
 				c.Ret = LinkLocalUnicastIP(ip)
 			}
 		},
-	}, {
-		Name: "GlobalUnicastIP",
-		Params: []internal.Param{
-			{Kind: adt.TopKind},
-		},
-		Result: adt.BoolKind,
-		Func: func(c *internal.CallCtxt) {
+		"GlobalUnicastIP": func(c *internal.CallCtxt) {
 			ip := c.Value(0)
 			if c.Do() {
 				c.Ret = GlobalUnicastIP(ip)
 			}
 		},
-	}, {
-		Name: "UnspecifiedIP",
-		Params: []internal.Param{
-			{Kind: adt.TopKind},
-		},
-		Result: adt.BoolKind,
-		Func: func(c *internal.CallCtxt) {
+		"UnspecifiedIP": func(c *internal.CallCtxt) {
 			ip := c.Value(0)
 			if c.Do() {
 				c.Ret = UnspecifiedIP(ip)
 			}
 		},
-	}, {
-		Name: "ToIP4",
-		Params: []internal.Param{
-			{Kind: adt.TopKind},
-		},
-		Result: adt.ListKind,
-		Func: func(c *internal.CallCtxt) {
+		"ToIP4": func(c *internal.CallCtxt) {
 			ip := c.Value(0)
 			if c.Do() {
 				c.Ret, c.Err = ToIP4(ip)
 			}
 		},
-	}, {
-		Name: "ToIP16",
-		Params: []internal.Param{
-			{Kind: adt.TopKind},
-		},
-		Result: adt.ListKind,
-		Func: func(c *internal.CallCtxt) {
+		"ToIP16": func(c *internal.CallCtxt) {
 			ip := c.Value(0)
 			if c.Do() {
 				c.Ret, c.Err = ToIP16(ip)
 			}
 		},
-	}, {
-		Name: "IPString",
-		Params: []internal.Param{
-			{Kind: adt.TopKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"IPString": func(c *internal.CallCtxt) {
 			ip := c.Value(0)
 			if c.Do() {
 				c.Ret, c.Err = IPString(ip)
 			}
 		},
-	}},
+	},
 	CUE: `{
 	#IPAddr: string | bytes | #Octets
+	exports: {
+		UnspecifiedIP?: {
+			out: bool
+			in: [{
+				name: "ip"
+				type: _
+			}]
+		}
+		ToIP4?: {
+			out: [...]
+			in: [{
+				name: "ip"
+				type: string | bytes | [...>=0 & <=255 & int]
+			}]
+		}
+		ToIP16?: {
+			out: [...]
+			in: [{
+				name: "ip"
+				type: _
+			}]
+		}
+		SplitHostPort?: {
+			out: [...string]
+			in: [{
+				name: "s"
+				type: string
+			}]
+		}
+		ParseIP?: {
+			out: [...]
+			in: [{
+				name: "s"
+				type: string
+			}]
+		}
+		MulticastIP?: {
+			out: bool
+			in: [{
+				name: "ip"
+				type: _
+			}]
+		}
+		LoopbackIP?: {
+			out: bool
+			in: [{
+				name: "ip"
+				type: _
+			}]
+		}
+		LinkLocalUnicastIP?: {
+			out: bool
+			in: [{
+				name: "ip"
+				type: _
+			}]
+		}
+		LinkLocalMulticastIP?: {
+			out: bool
+			in: [{
+				name: "ip"
+				type: _
+			}]
+		}
+		JoinHostPort?: {
+			out: string
+			in: [{
+				name: "host"
+				type: _
+			}, {
+				name: "port"
+				type: _
+			}]
+		}
+		InterfaceLocalMulticastIP?: {
+			out: bool
+			in: [{
+				name: "ip"
+				type: _
+			}]
+		}
+		IPv6len?: 16
+		IPv4len?: 4
+		IPv4?: {
+			out: bool
+			in: [{
+				name: "ip"
+				type: _
+			}]
+		}
+		IPString?: {
+			out: string
+			in: [{
+				name: "ip"
+				type: _
+			}]
+		}
+		IPCIDR?: {
+			out: bool
+			in: [{
+				name: "ip"
+				type: _
+			}]
+		}
+		IP?: {
+			out: bool
+			in: [{
+				name: "ip"
+				type: _
+			}]
+		}
+		GlobalUnicastIP?: {
+			out: bool
+			in: [{
+				name: "ip"
+				type: _
+			}]
+		}
+		FQDN?: {
+			out: bool
+			in: [{
+				name: "s"
+				type: string
+			}]
+		}
+	}
 	#Octets: [...int & >=0 & <=255]
 }`,
 }

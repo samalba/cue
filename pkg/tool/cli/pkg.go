@@ -14,12 +14,13 @@ func init() {
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
-	Native: []*internal.Builtin{},
+	Funcs: map[string]func(c *internal.CallCtxt){},
 	CUE: `{
 	Print: {
 		$id:  *"tool/cli.Print" | "print"
 		text: string
 	}
+	exports: {}
 	Ask: {
 		$id:      "tool/cli.Ask"
 		prompt:   string

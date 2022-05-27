@@ -14,231 +14,187 @@ func init() {
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
-	Native: []*internal.Builtin{{
-		Name:  "Nanosecond",
-		Const: "1",
-	}, {
-		Name:  "Microsecond",
-		Const: "1000",
-	}, {
-		Name:  "Millisecond",
-		Const: "1000000",
-	}, {
-		Name:  "Second",
-		Const: "1000000000",
-	}, {
-		Name:  "Minute",
-		Const: "60000000000",
-	}, {
-		Name:  "Hour",
-		Const: "3600000000000",
-	}, {
-		Name: "Duration",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-		},
-		Result: adt.BoolKind,
-		Func: func(c *internal.CallCtxt) {
+	Funcs: map[string]func(c *internal.CallCtxt){
+		"Duration": func(c *internal.CallCtxt) {
+
 			s := c.String(0)
 			if c.Do() {
 				c.Ret, c.Err = Duration(s)
 			}
 		},
-	}, {
-		Name: "FormatDuration",
-		Params: []internal.Param{
-			{Kind: adt.IntKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"FormatDuration": func(c *internal.CallCtxt) {
+
 			d := c.Int64(0)
 			if c.Do() {
 				c.Ret = FormatDuration(d)
 			}
 		},
-	}, {
-		Name: "ParseDuration",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-		},
-		Result: adt.IntKind,
-		Func: func(c *internal.CallCtxt) {
+		"ParseDuration": func(c *internal.CallCtxt) {
+
 			s := c.String(0)
 			if c.Do() {
 				c.Ret, c.Err = ParseDuration(s)
 			}
 		},
-	}, {
-		Name:  "ANSIC",
-		Const: "\"Mon Jan _2 15:04:05 2006\"",
-	}, {
-		Name:  "UnixDate",
-		Const: "\"Mon Jan _2 15:04:05 MST 2006\"",
-	}, {
-		Name:  "RubyDate",
-		Const: "\"Mon Jan 02 15:04:05 -0700 2006\"",
-	}, {
-		Name:  "RFC822",
-		Const: "\"02 Jan 06 15:04 MST\"",
-	}, {
-		Name:  "RFC822Z",
-		Const: "\"02 Jan 06 15:04 -0700\"",
-	}, {
-		Name:  "RFC850",
-		Const: "\"Monday, 02-Jan-06 15:04:05 MST\"",
-	}, {
-		Name:  "RFC1123",
-		Const: "\"Mon, 02 Jan 2006 15:04:05 MST\"",
-	}, {
-		Name:  "RFC1123Z",
-		Const: "\"Mon, 02 Jan 2006 15:04:05 -0700\"",
-	}, {
-		Name:  "RFC3339",
-		Const: "\"2006-01-02T15:04:05Z07:00\"",
-	}, {
-		Name:  "RFC3339Nano",
-		Const: "\"2006-01-02T15:04:05.999999999Z07:00\"",
-	}, {
-		Name:  "RFC3339Date",
-		Const: "\"2006-01-02\"",
-	}, {
-		Name:  "Kitchen",
-		Const: "\"3:04PM\"",
-	}, {
-		Name:  "Kitchen24",
-		Const: "\"15:04\"",
-	}, {
-		Name:  "January",
-		Const: "1",
-	}, {
-		Name:  "February",
-		Const: "2",
-	}, {
-		Name:  "March",
-		Const: "3",
-	}, {
-		Name:  "April",
-		Const: "4",
-	}, {
-		Name:  "May",
-		Const: "5",
-	}, {
-		Name:  "June",
-		Const: "6",
-	}, {
-		Name:  "July",
-		Const: "7",
-	}, {
-		Name:  "August",
-		Const: "8",
-	}, {
-		Name:  "September",
-		Const: "9",
-	}, {
-		Name:  "October",
-		Const: "10",
-	}, {
-		Name:  "November",
-		Const: "11",
-	}, {
-		Name:  "December",
-		Const: "12",
-	}, {
-		Name:  "Sunday",
-		Const: "0",
-	}, {
-		Name:  "Monday",
-		Const: "1",
-	}, {
-		Name:  "Tuesday",
-		Const: "2",
-	}, {
-		Name:  "Wednesday",
-		Const: "3",
-	}, {
-		Name:  "Thursday",
-		Const: "4",
-	}, {
-		Name:  "Friday",
-		Const: "5",
-	}, {
-		Name:  "Saturday",
-		Const: "6",
-	}, {
-		Name: "Time",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-		},
-		Result: adt.BoolKind,
-		Func: func(c *internal.CallCtxt) {
+		"Time": func(c *internal.CallCtxt) {
+
 			s := c.String(0)
 			if c.Do() {
 				c.Ret, c.Err = Time(s)
 			}
 		},
-	}, {
-		Name: "Format",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-			{Kind: adt.StringKind},
-		},
-		Result: adt.BoolKind,
-		Func: func(c *internal.CallCtxt) {
+		"Format": func(c *internal.CallCtxt) {
+
 			value, layout := c.String(0), c.String(1)
 			if c.Do() {
 				c.Ret, c.Err = Format(value, layout)
 			}
 		},
-	}, {
-		Name: "FormatString",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-			{Kind: adt.StringKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"FormatString": func(c *internal.CallCtxt) {
+
 			layout, value := c.String(0), c.String(1)
 			if c.Do() {
 				c.Ret, c.Err = FormatString(layout, value)
 			}
 		},
-	}, {
-		Name: "Parse",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-			{Kind: adt.StringKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"Parse": func(c *internal.CallCtxt) {
+
 			layout, value := c.String(0), c.String(1)
 			if c.Do() {
 				c.Ret, c.Err = Parse(layout, value)
 			}
 		},
-	}, {
-		Name: "Unix",
-		Params: []internal.Param{
-			{Kind: adt.IntKind},
-			{Kind: adt.IntKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"Unix": func(c *internal.CallCtxt) {
+
 			sec, nsec := c.Int64(0), c.Int64(1)
 			if c.Do() {
 				c.Ret = Unix(sec, nsec)
 			}
 		},
-	}, {
-		Name: "Split",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-		},
-		Result: adt.TopKind,
-		Func: func(c *internal.CallCtxt) {
+		"Split": func(c *internal.CallCtxt) {
+
 			t := c.String(0)
 			if c.Do() {
 				c.Ret, c.Err = Split(t)
 			}
 		},
-	}},
+	},
+	CUE: `{
+	_
+	exports: {
+		Wednesday?: 3
+		UnixDate?:  "Mon Jan _2 15:04:05 MST 2006"
+		Unix: {
+			in: [...#Arg] & [{
+				name: "sec"
+				type: >=-9223372036854775808 & <=9223372036854775807 & int
+			}, {
+				name: "nsec"
+				type: >=-9223372036854775808 & <=9223372036854775807 & int
+			}]
+			out: string
+		}
+		Tuesday?: 2
+		Time: {
+			in: [...#Arg] & [{
+				name: "s"
+				type: string
+			}]
+			out: bool
+		}
+		Thursday?: 4
+		Sunday?:   0
+		Split: {
+			in: [...#Arg] & [{
+				name: "t"
+				type: string
+			}]
+			out: _
+		}
+		September?:   9
+		Second?:      1000000000
+		Saturday?:    6
+		RubyDate?:    "Mon Jan 02 15:04:05 -0700 2006"
+		RFC850?:      "Monday, 02-Jan-06 15:04:05 MST"
+		RFC822Z?:     "02 Jan 06 15:04 -0700"
+		RFC822?:      "02 Jan 06 15:04 MST"
+		RFC3339Nano?: "2006-01-02T15:04:05.999999999Z07:00"
+		RFC3339Date?: "2006-01-02"
+		RFC3339?:     "2006-01-02T15:04:05Z07:00"
+		RFC1123Z?:    "Mon, 02 Jan 2006 15:04:05 -0700"
+		RFC1123?:     "Mon, 02 Jan 2006 15:04:05 MST"
+		ParseDuration: {
+			in: [...#Arg] & [{
+				name: "s"
+				type: string
+			}]
+			out: >=-9223372036854775808 & <=9223372036854775807 & int
+		}
+		October?:     10
+		November?:    11
+		Nanosecond?:  1
+		Monday?:      1
+		Minute?:      60000000000
+		Millisecond?: 1000000
+		Microsecond?: 1000
+		May?:         5
+		March?:       3
+		Kitchen24?:   "15:04"
+		Kitchen?:     "3:04PM"
+		June?:        6
+		July?:        7
+		January?:     1
+		Hour?:        3600000000000
+		Friday?:      5
+		FormatString: {
+			in: [...#Arg] & [{
+				name: "layout"
+				type: string
+			}, {
+				name: "value"
+				type: string
+			}]
+			out: string
+		}
+		FormatDuration: {
+			in: [...#Arg] & [{
+				name: "d"
+				type: >=-9223372036854775808 & <=9223372036854775807 & int
+			}]
+			out: string
+		}
+		Format: {
+			in: [...#Arg] & [{
+				name: "value"
+				type: string
+			}, {
+				name: "layout"
+				type: string
+			}]
+			out: bool
+		}
+		February?: 2
+		Duration: {
+			in: [...#Arg] & [{
+				name: "s"
+				type: string
+			}]
+			out: bool
+		}
+		December?: 12
+		August?:   8
+		April?:    4
+		ANSIC?:    "Mon Jan _2 15:04:05 2006"
+		Parse: {
+			in: [...#Arg] & [{
+				name: "layout"
+				type: string
+			}, {
+				name: "value"
+				type: string
+			}]
+			out: string
+		}
+	}
+}`,
 }

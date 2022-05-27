@@ -14,42 +14,56 @@ func init() {
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
-	Native: []*internal.Builtin{{
-		Name: "Execute",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-			{Kind: adt.TopKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+	Funcs: map[string]func(c *internal.CallCtxt){
+		"Execute": func(c *internal.CallCtxt) {
+
 			templ, data := c.String(0), c.Value(1)
 			if c.Do() {
 				c.Ret, c.Err = Execute(templ, data)
 			}
 		},
-	}, {
-		Name: "HTMLEscape",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"HTMLEscape": func(c *internal.CallCtxt) {
+
 			s := c.String(0)
 			if c.Do() {
 				c.Ret = HTMLEscape(s)
 			}
 		},
-	}, {
-		Name: "JSEscape",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"JSEscape": func(c *internal.CallCtxt) {
+
 			s := c.String(0)
 			if c.Do() {
 				c.Ret = JSEscape(s)
 			}
 		},
-	}},
+	},
+	CUE: `{
+	_
+	exports: {
+		JSEscape: {
+			in: [...#Arg] & [{
+				name: "s"
+				type: string
+			}]
+			out: string
+		}
+		Execute: {
+			in: [...#Arg] & [{
+				name: "templ"
+				type: string
+			}, {
+				name: "data"
+				type: _
+			}]
+			out: string
+		}
+		HTMLEscape: {
+			in: [...#Arg] & [{
+				name: "s"
+				type: string
+			}]
+			out: string
+		}
+	}
+}`,
 }

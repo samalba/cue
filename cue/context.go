@@ -274,7 +274,11 @@ func NilIsAny(isAny bool) EncodeOption {
 // The returned Value will represent an error, accessible through Err, if any
 // error occurred.
 //
-// Encode traverses the value v recursively. If an encountered value implements
+// Encode traverses the value v recursively.
+//
+// If an encountered value is a Value, it will be used as is.
+//
+// If an encountered value implements
 // the json.Marshaler interface and is not a nil pointer, Encode calls its
 // MarshalJSON method to produce JSON and convert that to CUE instead. If no
 // MarshalJSON method is present but the value implements encoding.TextMarshaler

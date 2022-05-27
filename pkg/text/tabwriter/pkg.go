@@ -14,17 +14,25 @@ func init() {
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
-	Native: []*internal.Builtin{{
-		Name: "Write",
-		Params: []internal.Param{
-			{Kind: adt.TopKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+	Funcs: map[string]func(c *internal.CallCtxt){
+		"Write": func(c *internal.CallCtxt) {
+
 			data := c.Value(0)
 			if c.Do() {
 				c.Ret, c.Err = Write(data)
 			}
 		},
-	}},
+	},
+	CUE: `{
+	_
+	exports: {
+		Write: {
+			in: [...#Arg] & [{
+				name: "data"
+				type: _
+			}]
+			out: string
+		}
+	}
+}`,
 }

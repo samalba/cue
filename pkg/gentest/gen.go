@@ -1,23 +1,3 @@
-// Copyright 2018 The CUE Authors
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-// Package gen generates the pkg.go files inside the packages under the pkg directory.
-//
-// It takes the list of packages from the packages.txt.
-//
-// Be sure to also update an entry in pkg/pkg.go, if so desired.
-// TODO update pkg/registry.go too.
 package main
 
 import (
@@ -27,14 +7,10 @@ import (
 	"fmt"
 	"go/ast"
 	gobuild "go/build"
-	"go/constant"
-	"go/format"
 	"go/parser"
 	"go/printer"
 	"go/token"
-	"io/ioutil"
 	"log"
-	"math/big"
 	"os"
 	"path"
 	"path/filepath"
@@ -49,11 +25,6 @@ import (
 )
 
 const genFile = "pkg.go"
-
-//go:embed packages.txt
-var packagesStr string
-
-var packages = strings.Fields(packagesStr)
 
 // Note: we avoid using the cue/load and the cuecontext packages
 // because they depend on the standard library which is what this
@@ -101,10 +72,8 @@ func main() {
 	log.SetFlags(log.Lshortfile)
 	log.SetOutput(os.Stdout)
 
-	for _, pkg := range packages {
-		if err := generate(pkg); err != nil {
-			log.Fatalf("%s: %v", pkg, err)
-		}
+	if err := generate("net"); err != nil {
+		log.Fatalf("cannot generate: %v", err)
 	}
 }
 
@@ -142,16 +111,6 @@ func generate(cuePkgPath string) error {
 	}
 	g.scope = scope
 
-	if err := header.Execute(g.w, headerParams{
-		GenFile: genFile,
-		GoPkg:   pkg.Name,
-		CUEPkg:  cuePkgPath,
-	}); err != nil {
-		return err
-	}
-
-	fmt.Fprintf(g.w, "var pkg = &internal.Package{\n")
-	fmt.Fprintf(g.w, "Funcs: map[string] func(c *internal.CallCtxt) {\n")
 	for _, filename := range pkg.GoFiles {
 		if filename == genFile {
 			continue
@@ -160,23 +119,10 @@ func generate(cuePkgPath string) error {
 			return err
 		}
 	}
-	fmt.Fprintf(g.w, "},\n")
 	if err := g.processCUE(); err != nil {
 		return err
 	}
-	fmt.Fprintf(g.w, "}\n")
-
-	filename := filepath.Join(pkg.Dir, genFile)
-
-	b, err := format.Source(g.w.Bytes())
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "%s:%v\n", filename, err)
-		b = g.w.Bytes() // write the unformatted source
-	}
-
-	if err := ioutil.WriteFile(filename, b, 0666); err != nil {
-		return err
-	}
+	fmt.Printf("%s\n", g.w.Bytes())
 	return nil
 }
 
@@ -188,15 +134,11 @@ func (g *generator) processCUE() error {
 
 	final := g.scope.FillPath(cue.MakePath(cue.Str("exports")), g.exports)
 	v := final.Syntax(cue.Raw(), cue.Definitions(true))
-	// fmt.Printf("%T\n", v)
-	// fmt.Println(astinternal.DebugStr(v))
 	b, err := cueformat.Node(v)
 	if err != nil {
 		return err
 	}
-	// body = strings.ReplaceAll(body, "\t", "")
-	// TODO: escape backtick
-	fmt.Fprintf(g.w, "CUE: `%s`,\n", string(b))
+	fmt.Fprintf(g.w, "%s\n", b)
 	return nil
 }
 
@@ -208,68 +150,16 @@ func (g *generator) processGo(filename string) error {
 
 	for _, d := range f.Decls {
 		switch x := d.(type) {
-		case *ast.GenDecl:
-			switch x.Tok {
-			case token.CONST:
-				for _, spec := range x.Specs {
-					spec := spec.(*ast.ValueSpec)
-					if ast.IsExported(spec.Names[0].Name) {
-						g.genConst(spec)
-					}
-				}
-			case token.VAR:
-				continue
-			case token.TYPE:
-				// TODO: support type declarations.
-				continue
-			case token.IMPORT:
-				continue
-			default:
-				panic(fmt.Errorf("gen %s: unexpected spec of type %s", filename, x.Tok))
-			}
 		case *ast.FuncDecl:
-			if x.Body != nil && x.Recv == nil && ast.IsExported(x.Name.Name) {
-				if err := g.genFunc(x); err != nil {
-					return fmt.Errorf("%s: %v", x.Name.Name, err)
-				}
+			if x.Name.Name != "ToIP4" {
+				continue
+			}
+			if err := g.genFunc(x); err != nil {
+				return fmt.Errorf("%s: %v", x.Name.Name, err)
 			}
 		}
 	}
 	return nil
-}
-
-func (g *generator) genConst(spec *ast.ValueSpec) {
-	name := spec.Names[0].Name
-	value := ""
-	switch v := g.toValue(spec.Values[0]); v.Kind() {
-	case constant.Bool, constant.Int, constant.String:
-		// TODO: convert octal numbers
-		value = v.ExactString()
-	case constant.Float:
-		var rat big.Rat
-		rat.SetString(v.ExactString())
-		var float big.Float
-		float.SetRat(&rat)
-		value = float.Text('g', -1)
-	default:
-		fmt.Printf("Dropped entry %s.%s (%T: %v)\n", g.cuePkgPath, name, v.Kind(), v.ExactString())
-		return
-	}
-	g.exports[name] = cueCtxt.CompileString(value)
-}
-
-func (g *generator) toValue(x ast.Expr) constant.Value {
-	switch x := x.(type) {
-	case *ast.BasicLit:
-		return constant.MakeFromLiteral(x.Value, x.Kind, 0)
-	case *ast.BinaryExpr:
-		return constant.BinaryOp(g.toValue(x.X), x.Op, g.toValue(x.Y))
-	case *ast.UnaryExpr:
-		return constant.UnaryOp(x.Op, g.toValue(x.X), 0)
-	default:
-		panic(fmt.Errorf("%s: unsupported expression type %T: %#v", g.cuePkgPath, x, x))
-	}
-	return constant.MakeUnknown()
 }
 
 func (g *generator) genFunc(x *ast.FuncDecl) error {
@@ -304,15 +194,9 @@ func (g *generator) genFunc(x *ast.FuncDecl) error {
 		return nil
 	}
 
-	fmt.Fprintf(g.w, "%q: func(c *internal.CallCtxt) {\n", x.Name.Name)
-	defer fmt.Fprintln(g.w, "},")
-
 	args := []string{}
-	vals := []string{}
 	for _, f := range x.Type.Params.List {
 		for _, name := range f.Names {
-			typ := strings.Title(g.goKind(f.Type))
-			vals = append(vals, fmt.Sprintf("c.%s(%d)", typ, len(args)))
 			args = append(args, name.Name)
 
 			decl = decl.FillPath(cue.MakePath(cue.Str("in"), cue.Str(name.Name)), g.goToCUE(f.Type))
@@ -332,18 +216,6 @@ func (g *generator) genFunc(x *ast.FuncDecl) error {
 		return err
 	}
 	g.exports[x.Name.Name] = decl
-
-	argList := strings.Join(args, ", ")
-	if len(args) > 0 {
-		fmt.Fprintf(g.w, "%s := %s\n", argList, strings.Join(vals, ", "))
-	}
-	fmt.Fprintln(g.w, "if c.Do() {")
-	defer fmt.Fprintln(g.w, "}")
-	if len(types) == 1 {
-		fmt.Fprintf(g.w, "c.Ret = %s(%s)\n", x.Name.Name, argList)
-	} else {
-		fmt.Fprintf(g.w, "c.Ret, c.Err = %s(%s)\n", x.Name.Name, argList)
-	}
 	return nil
 }
 
@@ -356,10 +228,8 @@ type funcArg struct {
 // commentDeclToFuncDecl converts from the object form found in the cue:
 // commands to the ordered list that's exposed in the output CUE.
 func commentDeclToFuncDecl(v cue.Value, args []string) (cue.Value, error) {
-	decl := cueCtxt.CompileString("{}")
-	// builtinSchema.LookupPath(cue.MakePath(cue.Def("#Func")))
+	decl := builtinSchema.LookupPath(cue.MakePath(cue.Def("#Func")))
 	decl = decl.FillPath(cue.MakePath(cue.Str("out")), v.LookupPath(cue.MakePath(cue.Str("out"))))
-
 	argPos := make(map[string]int)
 	for i, arg := range args {
 		argPos[arg] = i
@@ -386,11 +256,12 @@ func commentDeclToFuncDecl(v cue.Value, args []string) (cue.Value, error) {
 	if err := decl.Validate(); err != nil {
 		return cue.Value{}, err
 	}
+	fmt.Printf("all args: %v", cueStr(decl))
 	return decl, nil
 }
 
 func cueStr(val cue.Value) string {
-	data, err := cueformat.Node(val.Syntax())
+	data, err := cueformat.Node(val.Syntax(cue.Raw(), cue.Definitions(true)))
 	if err != nil {
 		panic(err)
 	}

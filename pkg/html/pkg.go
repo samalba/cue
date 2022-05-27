@@ -14,29 +14,39 @@ func init() {
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
-	Native: []*internal.Builtin{{
-		Name: "Escape",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+	Funcs: map[string]func(c *internal.CallCtxt){
+		"Escape": func(c *internal.CallCtxt) {
+
 			s := c.String(0)
 			if c.Do() {
 				c.Ret = Escape(s)
 			}
 		},
-	}, {
-		Name: "Unescape",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"Unescape": func(c *internal.CallCtxt) {
+
 			s := c.String(0)
 			if c.Do() {
 				c.Ret = Unescape(s)
 			}
 		},
-	}},
+	},
+	CUE: `{
+	_
+	exports: {
+		Unescape: {
+			in: [...#Arg] & [{
+				name: "s"
+				type: string
+			}]
+			out: string
+		}
+		Escape: {
+			in: [...#Arg] & [{
+				name: "s"
+				type: string
+			}]
+			out: string
+		}
+	}
+}`,
 }

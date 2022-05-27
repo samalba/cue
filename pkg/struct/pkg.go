@@ -14,31 +14,45 @@ func init() {
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
-	Native: []*internal.Builtin{{
-		Name: "MinFields",
-		Params: []internal.Param{
-			{Kind: adt.StructKind},
-			{Kind: adt.IntKind},
-		},
-		Result: adt.BottomKind,
-		Func: func(c *internal.CallCtxt) {
+	Funcs: map[string]func(c *internal.CallCtxt){
+		"MinFields": func(c *internal.CallCtxt) {
+
 			object, n := c.Struct(0), c.Int(1)
 			if c.Do() {
 				c.Ret = MinFields(object, n)
 			}
 		},
-	}, {
-		Name: "MaxFields",
-		Params: []internal.Param{
-			{Kind: adt.StructKind},
-			{Kind: adt.IntKind},
-		},
-		Result: adt.BoolKind,
-		Func: func(c *internal.CallCtxt) {
+		"MaxFields": func(c *internal.CallCtxt) {
+
 			object, n := c.Struct(0), c.Int(1)
 			if c.Do() {
 				c.Ret, c.Err = MaxFields(object, n)
 			}
 		},
-	}},
+	},
+	CUE: `{
+	_
+	exports: {
+		MinFields: {
+			in: [...#Arg] & [{
+				name: "object"
+				type: {}
+			}, {
+				name: "n"
+				type: >=-9223372036854775808 & <=9223372036854775807 & int
+			}]
+			out: _
+		}
+		MaxFields: {
+			in: [...#Arg] & [{
+				name: "object"
+				type: {}
+			}, {
+				name: "n"
+				type: >=-9223372036854775808 & <=9223372036854775807 & int
+			}]
+			out: bool
+		}
+	}
+}`,
 }

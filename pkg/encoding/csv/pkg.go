@@ -14,29 +14,39 @@ func init() {
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
-	Native: []*internal.Builtin{{
-		Name: "Encode",
-		Params: []internal.Param{
-			{Kind: adt.TopKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+	Funcs: map[string]func(c *internal.CallCtxt){
+		"Encode": func(c *internal.CallCtxt) {
+
 			x := c.Value(0)
 			if c.Do() {
 				c.Ret, c.Err = Encode(x)
 			}
 		},
-	}, {
-		Name: "Decode",
-		Params: []internal.Param{
-			{Kind: adt.BytesKind | adt.StringKind},
-		},
-		Result: adt.ListKind,
-		Func: func(c *internal.CallCtxt) {
+		"Decode": func(c *internal.CallCtxt) {
+
 			r := c.Reader(0)
 			if c.Do() {
 				c.Ret, c.Err = Decode(r)
 			}
 		},
-	}},
+	},
+	CUE: `{
+	_
+	exports: {
+		Encode: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: _
+			}]
+			out: string
+		}
+		Decode: {
+			in: [...#Arg] & [{
+				name: "r"
+				type: bytes | string
+			}]
+			out: [...]
+		}
+	}
+}`,
 }

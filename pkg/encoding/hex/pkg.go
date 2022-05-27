@@ -14,65 +14,81 @@ func init() {
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
-	Native: []*internal.Builtin{{
-		Name: "EncodedLen",
-		Params: []internal.Param{
-			{Kind: adt.IntKind},
-		},
-		Result: adt.IntKind,
-		Func: func(c *internal.CallCtxt) {
+	Funcs: map[string]func(c *internal.CallCtxt){
+		"EncodedLen": func(c *internal.CallCtxt) {
+
 			n := c.Int(0)
 			if c.Do() {
 				c.Ret = EncodedLen(n)
 			}
 		},
-	}, {
-		Name: "DecodedLen",
-		Params: []internal.Param{
-			{Kind: adt.IntKind},
-		},
-		Result: adt.IntKind,
-		Func: func(c *internal.CallCtxt) {
+		"DecodedLen": func(c *internal.CallCtxt) {
+
 			x := c.Int(0)
 			if c.Do() {
 				c.Ret = DecodedLen(x)
 			}
 		},
-	}, {
-		Name: "Decode",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-		},
-		Result: adt.BytesKind | adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"Decode": func(c *internal.CallCtxt) {
+
 			s := c.String(0)
 			if c.Do() {
 				c.Ret, c.Err = Decode(s)
 			}
 		},
-	}, {
-		Name: "Dump",
-		Params: []internal.Param{
-			{Kind: adt.BytesKind | adt.StringKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"Dump": func(c *internal.CallCtxt) {
+
 			data := c.Bytes(0)
 			if c.Do() {
 				c.Ret = Dump(data)
 			}
 		},
-	}, {
-		Name: "Encode",
-		Params: []internal.Param{
-			{Kind: adt.BytesKind | adt.StringKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"Encode": func(c *internal.CallCtxt) {
+
 			src := c.Bytes(0)
 			if c.Do() {
 				c.Ret = Encode(src)
 			}
 		},
-	}},
+	},
+	CUE: `{
+	_
+	exports: {
+		Dump: {
+			in: [...#Arg] & [{
+				name: "data"
+				type: bytes | string
+			}]
+			out: string
+		}
+		EncodedLen: {
+			in: [...#Arg] & [{
+				name: "n"
+				type: >=-9223372036854775808 & <=9223372036854775807 & int
+			}]
+			out: >=-9223372036854775808 & <=9223372036854775807 & int
+		}
+		Encode: {
+			in: [...#Arg] & [{
+				name: "src"
+				type: bytes | string
+			}]
+			out: string
+		}
+		DecodedLen: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: >=-9223372036854775808 & <=9223372036854775807 & int
+			}]
+			out: >=-9223372036854775808 & <=9223372036854775807 & int
+		}
+		Decode: {
+			in: [...#Arg] & [{
+				name: "s"
+				type: string
+			}]
+			out: bytes | string
+		}
+	}
+}`,
 }

@@ -14,38 +14,42 @@ func init() {
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
-	Native: []*internal.Builtin{{
-		Name:  "Size",
-		Const: "32",
-	}, {
-		Name:  "Size224",
-		Const: "28",
-	}, {
-		Name:  "BlockSize",
-		Const: "64",
-	}, {
-		Name: "Sum256",
-		Params: []internal.Param{
-			{Kind: adt.BytesKind | adt.StringKind},
-		},
-		Result: adt.BytesKind | adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+	Funcs: map[string]func(c *internal.CallCtxt){
+		"Sum256": func(c *internal.CallCtxt) {
+
 			data := c.Bytes(0)
 			if c.Do() {
 				c.Ret = Sum256(data)
 			}
 		},
-	}, {
-		Name: "Sum224",
-		Params: []internal.Param{
-			{Kind: adt.BytesKind | adt.StringKind},
-		},
-		Result: adt.BytesKind | adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"Sum224": func(c *internal.CallCtxt) {
+
 			data := c.Bytes(0)
 			if c.Do() {
 				c.Ret = Sum224(data)
 			}
 		},
-	}},
+	},
+	CUE: `{
+	_
+	exports: {
+		Sum256: {
+			in: [...#Arg] & [{
+				name: "data"
+				type: bytes | string
+			}]
+			out: bytes | string
+		}
+		Sum224: {
+			in: [...#Arg] & [{
+				name: "data"
+				type: bytes | string
+			}]
+			out: bytes | string
+		}
+		Size224?:   28
+		Size?:      32
+		BlockSize?: 64
+	}
+}`,
 }

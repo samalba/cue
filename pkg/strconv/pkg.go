@@ -14,247 +14,311 @@ func init() {
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
-	Native: []*internal.Builtin{{
-		Name: "Unquote",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+	Funcs: map[string]func(c *internal.CallCtxt){
+		"Unquote": func(c *internal.CallCtxt) {
+
 			s := c.String(0)
 			if c.Do() {
 				c.Ret, c.Err = Unquote(s)
 			}
 		},
-	}, {
-		Name: "ParseBool",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-		},
-		Result: adt.BoolKind,
-		Func: func(c *internal.CallCtxt) {
+		"ParseBool": func(c *internal.CallCtxt) {
+
 			str := c.String(0)
 			if c.Do() {
 				c.Ret, c.Err = ParseBool(str)
 			}
 		},
-	}, {
-		Name: "FormatBool",
-		Params: []internal.Param{
-			{Kind: adt.BoolKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"FormatBool": func(c *internal.CallCtxt) {
+
 			b := c.Bool(0)
 			if c.Do() {
 				c.Ret = FormatBool(b)
 			}
 		},
-	}, {
-		Name: "ParseComplex",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-			{Kind: adt.IntKind},
-		},
-		Result: adt.TopKind,
-		Func: func(c *internal.CallCtxt) {
+		"ParseComplex": func(c *internal.CallCtxt) {
+
 			s, bitSize := c.String(0), c.Int(1)
 			if c.Do() {
 				c.Ret, c.Err = ParseComplex(s, bitSize)
 			}
 		},
-	}, {
-		Name: "ParseFloat",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-			{Kind: adt.IntKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"ParseFloat": func(c *internal.CallCtxt) {
+
 			s, bitSize := c.String(0), c.Int(1)
 			if c.Do() {
 				c.Ret, c.Err = ParseFloat(s, bitSize)
 			}
 		},
-	}, {
-		Name:  "IntSize",
-		Const: "64",
-	}, {
-		Name: "ParseUint",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-			{Kind: adt.IntKind},
-			{Kind: adt.IntKind},
-		},
-		Result: adt.IntKind,
-		Func: func(c *internal.CallCtxt) {
+		"ParseUint": func(c *internal.CallCtxt) {
+
 			s, base, bitSize := c.String(0), c.Int(1), c.Int(2)
 			if c.Do() {
 				c.Ret, c.Err = ParseUint(s, base, bitSize)
 			}
 		},
-	}, {
-		Name: "ParseInt",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-			{Kind: adt.IntKind},
-			{Kind: adt.IntKind},
-		},
-		Result: adt.IntKind,
-		Func: func(c *internal.CallCtxt) {
+		"ParseInt": func(c *internal.CallCtxt) {
+
 			s, base, bitSize := c.String(0), c.Int(1), c.Int(2)
 			if c.Do() {
 				c.Ret, c.Err = ParseInt(s, base, bitSize)
 			}
 		},
-	}, {
-		Name: "Atoi",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-		},
-		Result: adt.IntKind,
-		Func: func(c *internal.CallCtxt) {
+		"Atoi": func(c *internal.CallCtxt) {
+
 			s := c.String(0)
 			if c.Do() {
 				c.Ret, c.Err = Atoi(s)
 			}
 		},
-	}, {
-		Name: "FormatFloat",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-			{Kind: adt.IntKind},
-			{Kind: adt.IntKind},
-			{Kind: adt.IntKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"FormatFloat": func(c *internal.CallCtxt) {
+
 			f, fmt, prec, bitSize := c.Float64(0), c.Byte(1), c.Int(2), c.Int(3)
 			if c.Do() {
 				c.Ret = FormatFloat(f, fmt, prec, bitSize)
 			}
 		},
-	}, {
-		Name: "FormatUint",
-		Params: []internal.Param{
-			{Kind: adt.IntKind},
-			{Kind: adt.IntKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
-			i, base := c.BigInt(0), c.Int(1)
+		"FormatUint": func(c *internal.CallCtxt) {
+
+			i, base := c.Uint64(0), c.Int(1)
 			if c.Do() {
 				c.Ret = FormatUint(i, base)
 			}
 		},
-	}, {
-		Name: "FormatInt",
-		Params: []internal.Param{
-			{Kind: adt.IntKind},
-			{Kind: adt.IntKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
-			i, base := c.BigInt(0), c.Int(1)
+		"FormatInt": func(c *internal.CallCtxt) {
+
+			i, base := c.Int64(0), c.Int(1)
 			if c.Do() {
 				c.Ret = FormatInt(i, base)
 			}
 		},
-	}, {
-		Name: "Quote",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"Quote": func(c *internal.CallCtxt) {
+
 			s := c.String(0)
 			if c.Do() {
 				c.Ret = Quote(s)
 			}
 		},
-	}, {
-		Name: "QuoteToASCII",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"QuoteToASCII": func(c *internal.CallCtxt) {
+
 			s := c.String(0)
 			if c.Do() {
 				c.Ret = QuoteToASCII(s)
 			}
 		},
-	}, {
-		Name: "QuoteToGraphic",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"QuoteToGraphic": func(c *internal.CallCtxt) {
+
 			s := c.String(0)
 			if c.Do() {
 				c.Ret = QuoteToGraphic(s)
 			}
 		},
-	}, {
-		Name: "QuoteRune",
-		Params: []internal.Param{
-			{Kind: adt.IntKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"QuoteRune": func(c *internal.CallCtxt) {
+
 			r := c.Rune(0)
 			if c.Do() {
 				c.Ret = QuoteRune(r)
 			}
 		},
-	}, {
-		Name: "QuoteRuneToASCII",
-		Params: []internal.Param{
-			{Kind: adt.IntKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"QuoteRuneToASCII": func(c *internal.CallCtxt) {
+
 			r := c.Rune(0)
 			if c.Do() {
 				c.Ret = QuoteRuneToASCII(r)
 			}
 		},
-	}, {
-		Name: "QuoteRuneToGraphic",
-		Params: []internal.Param{
-			{Kind: adt.IntKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"QuoteRuneToGraphic": func(c *internal.CallCtxt) {
+
 			r := c.Rune(0)
 			if c.Do() {
 				c.Ret = QuoteRuneToGraphic(r)
 			}
 		},
-	}, {
-		Name: "IsPrint",
-		Params: []internal.Param{
-			{Kind: adt.IntKind},
-		},
-		Result: adt.BoolKind,
-		Func: func(c *internal.CallCtxt) {
+		"IsPrint": func(c *internal.CallCtxt) {
+
 			r := c.Rune(0)
 			if c.Do() {
 				c.Ret = IsPrint(r)
 			}
 		},
-	}, {
-		Name: "IsGraphic",
-		Params: []internal.Param{
-			{Kind: adt.IntKind},
-		},
-		Result: adt.BoolKind,
-		Func: func(c *internal.CallCtxt) {
+		"IsGraphic": func(c *internal.CallCtxt) {
+
 			r := c.Rune(0)
 			if c.Do() {
 				c.Ret = IsGraphic(r)
 			}
 		},
-	}},
+	},
+	CUE: `{
+	_
+	exports: {
+		Unquote: {
+			in: [...#Arg] & [{
+				name: "s"
+				type: string
+			}]
+			out: string
+		}
+		QuoteToGraphic: {
+			in: [...#Arg] & [{
+				name: "s"
+				type: string
+			}]
+			out: string
+		}
+		QuoteToASCII: {
+			in: [...#Arg] & [{
+				name: "s"
+				type: string
+			}]
+			out: string
+		}
+		QuoteRuneToGraphic: {
+			in: [...#Arg] & [{
+				name: "r"
+				type: >=-2147483648 & <=2147483647 & int
+			}]
+			out: string
+		}
+		QuoteRuneToASCII: {
+			in: [...#Arg] & [{
+				name: "r"
+				type: >=-2147483648 & <=2147483647 & int
+			}]
+			out: string
+		}
+		QuoteRune: {
+			in: [...#Arg] & [{
+				name: "r"
+				type: >=-2147483648 & <=2147483647 & int
+			}]
+			out: string
+		}
+		Quote: {
+			in: [...#Arg] & [{
+				name: "s"
+				type: string
+			}]
+			out: string
+		}
+		ParseUint: {
+			in: [...#Arg] & [{
+				name: "s"
+				type: string
+			}, {
+				name: "base"
+				type: >=-9223372036854775808 & <=9223372036854775807 & int
+			}, {
+				name: "bitSize"
+				type: >=-9223372036854775808 & <=9223372036854775807 & int
+			}]
+			out: >=0 & <=18446744073709551615 & int
+		}
+		ParseInt: {
+			in: [...#Arg] & [{
+				name: "s"
+				type: string
+			}, {
+				name: "base"
+				type: >=-9223372036854775808 & <=9223372036854775807 & int
+			}, {
+				name: "bitSize"
+				type: >=-9223372036854775808 & <=9223372036854775807 & int
+			}]
+			out: >=-9223372036854775808 & <=9223372036854775807 & int
+		}
+		ParseFloat: {
+			in: [...#Arg] & [{
+				name: "s"
+				type: string
+			}, {
+				name: "bitSize"
+				type: >=-9223372036854775808 & <=9223372036854775807 & int
+			}]
+			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+		}
+		ParseComplex: {
+			in: [...#Arg] & [{
+				name: "s"
+				type: string
+			}, {
+				name: "bitSize"
+				type: >=-9223372036854775808 & <=9223372036854775807 & int
+			}]
+			out: _
+		}
+		ParseBool: {
+			in: [...#Arg] & [{
+				name: "str"
+				type: string
+			}]
+			out: bool
+		}
+		IsPrint: {
+			in: [...#Arg] & [{
+				name: "r"
+				type: >=-2147483648 & <=2147483647 & int
+			}]
+			out: bool
+		}
+		IsGraphic: {
+			in: [...#Arg] & [{
+				name: "r"
+				type: >=-2147483648 & <=2147483647 & int
+			}]
+			out: bool
+		}
+		IntSize?: 64
+		FormatUint: {
+			in: [...#Arg] & [{
+				name: "i"
+				type: >=0 & <=18446744073709551615 & int
+			}, {
+				name: "base"
+				type: >=-9223372036854775808 & <=9223372036854775807 & int
+			}]
+			out: string
+		}
+		FormatInt: {
+			in: [...#Arg] & [{
+				name: "i"
+				type: >=-9223372036854775808 & <=9223372036854775807 & int
+			}, {
+				name: "base"
+				type: >=-9223372036854775808 & <=9223372036854775807 & int
+			}]
+			out: string
+		}
+		FormatFloat: {
+			in: [...#Arg] & [{
+				name: "f"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}, {
+				name: "fmt"
+				type: >=0 & <=255 & int
+			}, {
+				name: "prec"
+				type: >=-9223372036854775808 & <=9223372036854775807 & int
+			}, {
+				name: "bitSize"
+				type: >=-9223372036854775808 & <=9223372036854775807 & int
+			}]
+			out: string
+		}
+		FormatBool: {
+			in: [...#Arg] & [{
+				name: "b"
+				type: bool
+			}]
+			out: string
+		}
+		Atoi: {
+			in: [...#Arg] & [{
+				name: "s"
+				type: string
+			}]
+			out: >=-9223372036854775808 & <=9223372036854775807 & int
+		}
+	}
+}`,
 }

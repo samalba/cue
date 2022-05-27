@@ -14,713 +14,799 @@ func init() {
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
-	Native: []*internal.Builtin{{
-		Name:  "MaxExp",
-		Const: "2147483647",
-	}, {
-		Name:  "MinExp",
-		Const: "-2147483648",
-	}, {
-		Name:  "MaxPrec",
-		Const: "4294967295",
-	}, {
-		Name:  "ToNearestEven",
-		Const: "0",
-	}, {
-		Name:  "ToNearestAway",
-		Const: "1",
-	}, {
-		Name:  "ToZero",
-		Const: "2",
-	}, {
-		Name:  "AwayFromZero",
-		Const: "3",
-	}, {
-		Name:  "ToNegativeInf",
-		Const: "4",
-	}, {
-		Name:  "ToPositiveInf",
-		Const: "5",
-	}, {
-		Name:  "Below",
-		Const: "-1",
-	}, {
-		Name:  "Exact",
-		Const: "0",
-	}, {
-		Name:  "Above",
-		Const: "1",
-	}, {
-		Name: "Jacobi",
-		Params: []internal.Param{
-			{Kind: adt.IntKind},
-			{Kind: adt.IntKind},
-		},
-		Result: adt.IntKind,
-		Func: func(c *internal.CallCtxt) {
+	Funcs: map[string]func(c *internal.CallCtxt){
+		"Jacobi": func(c *internal.CallCtxt) {
+
 			x, y := c.BigInt(0), c.BigInt(1)
 			if c.Do() {
 				c.Ret = Jacobi(x, y)
 			}
 		},
-	}, {
-		Name:  "MaxBase",
-		Const: "62",
-	}, {
-		Name: "Floor",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.IntKind,
-		Func: func(c *internal.CallCtxt) {
+		"Floor": func(c *internal.CallCtxt) {
+
 			x := c.Decimal(0)
 			if c.Do() {
 				c.Ret, c.Err = Floor(x)
 			}
 		},
-	}, {
-		Name: "Ceil",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.IntKind,
-		Func: func(c *internal.CallCtxt) {
+		"Ceil": func(c *internal.CallCtxt) {
+
 			x := c.Decimal(0)
 			if c.Do() {
 				c.Ret, c.Err = Ceil(x)
 			}
 		},
-	}, {
-		Name: "Trunc",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.IntKind,
-		Func: func(c *internal.CallCtxt) {
+		"Trunc": func(c *internal.CallCtxt) {
+
 			x := c.Decimal(0)
 			if c.Do() {
 				c.Ret, c.Err = Trunc(x)
 			}
 		},
-	}, {
-		Name: "Round",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.IntKind,
-		Func: func(c *internal.CallCtxt) {
+		"Round": func(c *internal.CallCtxt) {
+
 			x := c.Decimal(0)
 			if c.Do() {
 				c.Ret, c.Err = Round(x)
 			}
 		},
-	}, {
-		Name: "RoundToEven",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.IntKind,
-		Func: func(c *internal.CallCtxt) {
+		"RoundToEven": func(c *internal.CallCtxt) {
+
 			x := c.Decimal(0)
 			if c.Do() {
 				c.Ret, c.Err = RoundToEven(x)
 			}
 		},
-	}, {
-		Name: "MultipleOf",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-			{Kind: adt.NumKind},
-		},
-		Result: adt.BoolKind,
-		Func: func(c *internal.CallCtxt) {
+		"MultipleOf": func(c *internal.CallCtxt) {
+
 			x, y := c.Decimal(0), c.Decimal(1)
 			if c.Do() {
 				c.Ret, c.Err = MultipleOf(x, y)
 			}
 		},
-	}, {
-		Name: "Abs",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Abs": func(c *internal.CallCtxt) {
+
 			x := c.Decimal(0)
 			if c.Do() {
 				c.Ret, c.Err = Abs(x)
 			}
 		},
-	}, {
-		Name: "Acosh",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Acosh": func(c *internal.CallCtxt) {
+
 			x := c.Float64(0)
 			if c.Do() {
 				c.Ret = Acosh(x)
 			}
 		},
-	}, {
-		Name: "Asin",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Asin": func(c *internal.CallCtxt) {
+
 			x := c.Float64(0)
 			if c.Do() {
 				c.Ret = Asin(x)
 			}
 		},
-	}, {
-		Name: "Acos",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Acos": func(c *internal.CallCtxt) {
+
 			x := c.Float64(0)
 			if c.Do() {
 				c.Ret = Acos(x)
 			}
 		},
-	}, {
-		Name: "Asinh",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Asinh": func(c *internal.CallCtxt) {
+
 			x := c.Float64(0)
 			if c.Do() {
 				c.Ret = Asinh(x)
 			}
 		},
-	}, {
-		Name: "Atan",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Atan": func(c *internal.CallCtxt) {
+
 			x := c.Float64(0)
 			if c.Do() {
 				c.Ret = Atan(x)
 			}
 		},
-	}, {
-		Name: "Atan2",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Atan2": func(c *internal.CallCtxt) {
+
 			y, x := c.Float64(0), c.Float64(1)
 			if c.Do() {
 				c.Ret = Atan2(y, x)
 			}
 		},
-	}, {
-		Name: "Atanh",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Atanh": func(c *internal.CallCtxt) {
+
 			x := c.Float64(0)
 			if c.Do() {
 				c.Ret = Atanh(x)
 			}
 		},
-	}, {
-		Name: "Cbrt",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Cbrt": func(c *internal.CallCtxt) {
+
 			x := c.Decimal(0)
 			if c.Do() {
 				c.Ret, c.Err = Cbrt(x)
 			}
 		},
-	}, {
-		Name:  "E",
-		Const: "2.71828182845904523536028747135266249775724709369995957496696763",
-	}, {
-		Name:  "Pi",
-		Const: "3.14159265358979323846264338327950288419716939937510582097494459",
-	}, {
-		Name:  "Phi",
-		Const: "1.61803398874989484820458683436563811772030917980576286213544861",
-	}, {
-		Name:  "Sqrt2",
-		Const: "1.41421356237309504880168872420969807856967187537694807317667974",
-	}, {
-		Name:  "SqrtE",
-		Const: "1.64872127070012814684865078781416357165377610071014801157507931",
-	}, {
-		Name:  "SqrtPi",
-		Const: "1.77245385090551602729816748334114518279754945612238712821380779",
-	}, {
-		Name:  "SqrtPhi",
-		Const: "1.27201964951406896425242246173749149171560804184009624861664038",
-	}, {
-		Name:  "Ln2",
-		Const: "0.693147180559945309417232121458176568075500134360255254120680009",
-	}, {
-		Name:  "Log2E",
-		Const: "1.442695040888963407359924681001892137426645954152985934135449408",
-	}, {
-		Name:  "Ln10",
-		Const: "2.3025850929940456840179914546843642076011014886287729760333278",
-	}, {
-		Name:  "Log10E",
-		Const: "0.43429448190325182765112891891660508229439700580366656611445378",
-	}, {
-		Name: "Copysign",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Copysign": func(c *internal.CallCtxt) {
+
 			x, y := c.Decimal(0), c.Decimal(1)
 			if c.Do() {
 				c.Ret = Copysign(x, y)
 			}
 		},
-	}, {
-		Name: "Dim",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Dim": func(c *internal.CallCtxt) {
+
 			x, y := c.Decimal(0), c.Decimal(1)
 			if c.Do() {
 				c.Ret, c.Err = Dim(x, y)
 			}
 		},
-	}, {
-		Name: "Erf",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Erf": func(c *internal.CallCtxt) {
+
 			x := c.Float64(0)
 			if c.Do() {
 				c.Ret = Erf(x)
 			}
 		},
-	}, {
-		Name: "Erfc",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Erfc": func(c *internal.CallCtxt) {
+
 			x := c.Float64(0)
 			if c.Do() {
 				c.Ret = Erfc(x)
 			}
 		},
-	}, {
-		Name: "Erfinv",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Erfinv": func(c *internal.CallCtxt) {
+
 			x := c.Float64(0)
 			if c.Do() {
 				c.Ret = Erfinv(x)
 			}
 		},
-	}, {
-		Name: "Erfcinv",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Erfcinv": func(c *internal.CallCtxt) {
+
 			x := c.Float64(0)
 			if c.Do() {
 				c.Ret = Erfcinv(x)
 			}
 		},
-	}, {
-		Name: "Exp",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Exp": func(c *internal.CallCtxt) {
+
 			x := c.Decimal(0)
 			if c.Do() {
 				c.Ret, c.Err = Exp(x)
 			}
 		},
-	}, {
-		Name: "Exp2",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Exp2": func(c *internal.CallCtxt) {
+
 			x := c.Decimal(0)
 			if c.Do() {
 				c.Ret, c.Err = Exp2(x)
 			}
 		},
-	}, {
-		Name: "Expm1",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Expm1": func(c *internal.CallCtxt) {
+
 			x := c.Float64(0)
 			if c.Do() {
 				c.Ret = Expm1(x)
 			}
 		},
-	}, {
-		Name: "Gamma",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Gamma": func(c *internal.CallCtxt) {
+
 			x := c.Float64(0)
 			if c.Do() {
 				c.Ret = Gamma(x)
 			}
 		},
-	}, {
-		Name: "Hypot",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Hypot": func(c *internal.CallCtxt) {
+
 			p, q := c.Float64(0), c.Float64(1)
 			if c.Do() {
 				c.Ret = Hypot(p, q)
 			}
 		},
-	}, {
-		Name: "J0",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"J0": func(c *internal.CallCtxt) {
+
 			x := c.Float64(0)
 			if c.Do() {
 				c.Ret = J0(x)
 			}
 		},
-	}, {
-		Name: "Y0",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Y0": func(c *internal.CallCtxt) {
+
 			x := c.Float64(0)
 			if c.Do() {
 				c.Ret = Y0(x)
 			}
 		},
-	}, {
-		Name: "J1",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"J1": func(c *internal.CallCtxt) {
+
 			x := c.Float64(0)
 			if c.Do() {
 				c.Ret = J1(x)
 			}
 		},
-	}, {
-		Name: "Y1",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Y1": func(c *internal.CallCtxt) {
+
 			x := c.Float64(0)
 			if c.Do() {
 				c.Ret = Y1(x)
 			}
 		},
-	}, {
-		Name: "Jn",
-		Params: []internal.Param{
-			{Kind: adt.IntKind},
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Jn": func(c *internal.CallCtxt) {
+
 			n, x := c.Int(0), c.Float64(1)
 			if c.Do() {
 				c.Ret = Jn(n, x)
 			}
 		},
-	}, {
-		Name: "Yn",
-		Params: []internal.Param{
-			{Kind: adt.IntKind},
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Yn": func(c *internal.CallCtxt) {
+
 			n, x := c.Int(0), c.Float64(1)
 			if c.Do() {
 				c.Ret = Yn(n, x)
 			}
 		},
-	}, {
-		Name: "Ldexp",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-			{Kind: adt.IntKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Ldexp": func(c *internal.CallCtxt) {
+
 			frac, exp := c.Float64(0), c.Int(1)
 			if c.Do() {
 				c.Ret = Ldexp(frac, exp)
 			}
 		},
-	}, {
-		Name: "Log",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Log": func(c *internal.CallCtxt) {
+
 			x := c.Decimal(0)
 			if c.Do() {
 				c.Ret, c.Err = Log(x)
 			}
 		},
-	}, {
-		Name: "Log10",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Log10": func(c *internal.CallCtxt) {
+
 			x := c.Decimal(0)
 			if c.Do() {
 				c.Ret, c.Err = Log10(x)
 			}
 		},
-	}, {
-		Name: "Log2",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Log2": func(c *internal.CallCtxt) {
+
 			x := c.Decimal(0)
 			if c.Do() {
 				c.Ret, c.Err = Log2(x)
 			}
 		},
-	}, {
-		Name: "Log1p",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Log1p": func(c *internal.CallCtxt) {
+
 			x := c.Float64(0)
 			if c.Do() {
 				c.Ret = Log1p(x)
 			}
 		},
-	}, {
-		Name: "Logb",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Logb": func(c *internal.CallCtxt) {
+
 			x := c.Float64(0)
 			if c.Do() {
 				c.Ret = Logb(x)
 			}
 		},
-	}, {
-		Name: "Ilogb",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.IntKind,
-		Func: func(c *internal.CallCtxt) {
+		"Ilogb": func(c *internal.CallCtxt) {
+
 			x := c.Float64(0)
 			if c.Do() {
 				c.Ret = Ilogb(x)
 			}
 		},
-	}, {
-		Name: "Mod",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Mod": func(c *internal.CallCtxt) {
+
 			x, y := c.Float64(0), c.Float64(1)
 			if c.Do() {
 				c.Ret = Mod(x, y)
 			}
 		},
-	}, {
-		Name: "Pow",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Pow": func(c *internal.CallCtxt) {
+
 			x, y := c.Decimal(0), c.Decimal(1)
 			if c.Do() {
 				c.Ret, c.Err = Pow(x, y)
 			}
 		},
-	}, {
-		Name: "Pow10",
-		Params: []internal.Param{
-			{Kind: adt.IntKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Pow10": func(c *internal.CallCtxt) {
+
 			n := c.Int32(0)
 			if c.Do() {
 				c.Ret = Pow10(n)
 			}
 		},
-	}, {
-		Name: "Remainder",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Remainder": func(c *internal.CallCtxt) {
+
 			x, y := c.Float64(0), c.Float64(1)
 			if c.Do() {
 				c.Ret = Remainder(x, y)
 			}
 		},
-	}, {
-		Name: "Signbit",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.BoolKind,
-		Func: func(c *internal.CallCtxt) {
+		"Signbit": func(c *internal.CallCtxt) {
+
 			x := c.Decimal(0)
 			if c.Do() {
 				c.Ret = Signbit(x)
 			}
 		},
-	}, {
-		Name: "Cos",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Cos": func(c *internal.CallCtxt) {
+
 			x := c.Float64(0)
 			if c.Do() {
 				c.Ret = Cos(x)
 			}
 		},
-	}, {
-		Name: "Sin",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Sin": func(c *internal.CallCtxt) {
+
 			x := c.Float64(0)
 			if c.Do() {
 				c.Ret = Sin(x)
 			}
 		},
-	}, {
-		Name: "Sinh",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Sinh": func(c *internal.CallCtxt) {
+
 			x := c.Float64(0)
 			if c.Do() {
 				c.Ret = Sinh(x)
 			}
 		},
-	}, {
-		Name: "Cosh",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Cosh": func(c *internal.CallCtxt) {
+
 			x := c.Float64(0)
 			if c.Do() {
 				c.Ret = Cosh(x)
 			}
 		},
-	}, {
-		Name: "Sqrt",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Sqrt": func(c *internal.CallCtxt) {
+
 			x := c.Float64(0)
 			if c.Do() {
 				c.Ret = Sqrt(x)
 			}
 		},
-	}, {
-		Name: "Tan",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Tan": func(c *internal.CallCtxt) {
+
 			x := c.Float64(0)
 			if c.Do() {
 				c.Ret = Tan(x)
 			}
 		},
-	}, {
-		Name: "Tanh",
-		Params: []internal.Param{
-			{Kind: adt.NumKind},
-		},
-		Result: adt.NumKind,
-		Func: func(c *internal.CallCtxt) {
+		"Tanh": func(c *internal.CallCtxt) {
+
 			x := c.Float64(0)
 			if c.Do() {
 				c.Ret = Tanh(x)
 			}
 		},
-	}},
+	},
+	CUE: `{
+	_
+	exports: {
+		Yn: {
+			in: [...#Arg] & [{
+				name: "n"
+				type: >=-9223372036854775808 & <=9223372036854775807 & int
+			}, {
+				name: "x"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}]
+			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+		}
+		Y1: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}]
+			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+		}
+		Y0: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}]
+			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+		}
+		Trunc: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: number
+			}]
+			out: int
+		}
+		ToZero?:        2
+		ToPositiveInf?: 5
+		ToNegativeInf?: 4
+		ToNearestEven?: 0
+		ToNearestAway?: 1
+		Tanh: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}]
+			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+		}
+		Tan: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}]
+			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+		}
+		SqrtPi?:  1.77245385090551602729816748334114518279754945612238712821380779
+		SqrtPhi?: 1.27201964951406896425242246173749149171560804184009624861664038
+		SqrtE?:   1.64872127070012814684865078781416357165377610071014801157507931
+		Sqrt2?:   1.41421356237309504880168872420969807856967187537694807317667974
+		Sqrt: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}]
+			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+		}
+		Sinh: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}]
+			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+		}
+		Sin: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}]
+			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+		}
+		Signbit: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: number
+			}]
+			out: bool
+		}
+		RoundToEven: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: number
+			}]
+			out: int
+		}
+		Round: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: number
+			}]
+			out: int
+		}
+		Remainder: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}, {
+				name: "y"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}]
+			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+		}
+		Pow10: {
+			in: [...#Arg] & [{
+				name: "n"
+				type: >=-2147483648 & <=2147483647 & int
+			}]
+			out: number
+		}
+		Pow: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: number
+			}, {
+				name: "y"
+				type: number
+			}]
+			out: number
+		}
+		Pi?:  3.14159265358979323846264338327950288419716939937510582097494459
+		Phi?: 1.61803398874989484820458683436563811772030917980576286213544861
+		MultipleOf: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: number
+			}, {
+				name: "y"
+				type: number
+			}]
+			out: bool
+		}
+		Mod: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}, {
+				name: "y"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}]
+			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+		}
+		MinExp?:  -2147483648
+		MaxPrec?: 4294967295
+		MaxExp?:  2147483647
+		MaxBase?: 62
+		Logb: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}]
+			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+		}
+		Log2E?: 1.442695040888963407359924681001892137426645954152985934135449408
+		Log2: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: number
+			}]
+			out: number
+		}
+		Log1p: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}]
+			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+		}
+		Log10E?: 0.43429448190325182765112891891660508229439700580366656611445378
+		Log10: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: number
+			}]
+			out: number
+		}
+		Log: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: number
+			}]
+			out: number
+		}
+		Ln2?:  0.693147180559945309417232121458176568075500134360255254120680009
+		Ln10?: 2.3025850929940456840179914546843642076011014886287729760333278
+		Ldexp: {
+			in: [...#Arg] & [{
+				name: "frac"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}, {
+				name: "exp"
+				type: >=-9223372036854775808 & <=9223372036854775807 & int
+			}]
+			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+		}
+		Jn: {
+			in: [...#Arg] & [{
+				name: "n"
+				type: >=-9223372036854775808 & <=9223372036854775807 & int
+			}, {
+				name: "x"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}]
+			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+		}
+		Jacobi: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: int
+			}, {
+				name: "y"
+				type: int
+			}]
+			out: >=-9223372036854775808 & <=9223372036854775807 & int
+		}
+		J1: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}]
+			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+		}
+		J0: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}]
+			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+		}
+		Ilogb: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}]
+			out: >=-9223372036854775808 & <=9223372036854775807 & int
+		}
+		Hypot: {
+			in: [...#Arg] & [{
+				name: "p"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}, {
+				name: "q"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}]
+			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+		}
+		Gamma: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}]
+			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+		}
+		Floor: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: number
+			}]
+			out: int
+		}
+		Expm1: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}]
+			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+		}
+		Exp2: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: number
+			}]
+			out: number
+		}
+		Exp: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: number
+			}]
+			out: number
+		}
+		Exact?: 0
+		Erfinv: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}]
+			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+		}
+		Erfcinv: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}]
+			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+		}
+		Erfc: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}]
+			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+		}
+		Erf: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}]
+			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+		}
+		E?: 2.71828182845904523536028747135266249775724709369995957496696763
+		Dim: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: number
+			}, {
+				name: "y"
+				type: number
+			}]
+			out: number
+		}
+		Cosh: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}]
+			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+		}
+		Cos: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}]
+			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+		}
+		Copysign: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: number
+			}, {
+				name: "y"
+				type: number
+			}]
+			out: number
+		}
+		Ceil: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: number
+			}]
+			out: int
+		}
+		Cbrt: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: number
+			}]
+			out: number
+		}
+		Below?:        -1
+		AwayFromZero?: 3
+		Atanh: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}]
+			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+		}
+		Atan2: {
+			in: [...#Arg] & [{
+				name: "y"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}, {
+				name: "x"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}]
+			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+		}
+		Atan: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}]
+			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+		}
+		Asinh: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}]
+			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+		}
+		Asin: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}]
+			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+		}
+		Acosh: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}]
+			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+		}
+		Acos: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+			}]
+			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
+		}
+		Abs: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: number
+			}]
+			out: number
+		}
+		Above?: 1
+	}
+}`,
 }

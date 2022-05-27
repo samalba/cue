@@ -14,7 +14,7 @@ func init() {
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
-	Native: []*internal.Builtin{},
+	Funcs: map[string]func(c *internal.CallCtxt){},
 	CUE: `{
 	Read: {
 		$id:      "tool/file.Read"
@@ -53,6 +53,7 @@ var pkg = &internal.Package{
 		pattern: string | *""
 		path:    string
 	}
+	exports: {}
 	RemoveAll: {
 		$id:     "tool/file.RemoveAll"
 		path:    string

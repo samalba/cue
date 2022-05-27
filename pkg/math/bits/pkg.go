@@ -14,134 +14,178 @@ func init() {
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
-	Native: []*internal.Builtin{{
-		Name: "Lsh",
-		Params: []internal.Param{
-			{Kind: adt.IntKind},
-			{Kind: adt.IntKind},
-		},
-		Result: adt.IntKind,
-		Func: func(c *internal.CallCtxt) {
+	Funcs: map[string]func(c *internal.CallCtxt){
+		"Lsh": func(c *internal.CallCtxt) {
+
 			x, n := c.BigInt(0), c.Uint(1)
 			if c.Do() {
 				c.Ret = Lsh(x, n)
 			}
 		},
-	}, {
-		Name: "Rsh",
-		Params: []internal.Param{
-			{Kind: adt.IntKind},
-			{Kind: adt.IntKind},
-		},
-		Result: adt.IntKind,
-		Func: func(c *internal.CallCtxt) {
+		"Rsh": func(c *internal.CallCtxt) {
+
 			x, n := c.BigInt(0), c.Uint(1)
 			if c.Do() {
 				c.Ret = Rsh(x, n)
 			}
 		},
-	}, {
-		Name: "At",
-		Params: []internal.Param{
-			{Kind: adt.IntKind},
-			{Kind: adt.IntKind},
-		},
-		Result: adt.IntKind,
-		Func: func(c *internal.CallCtxt) {
+		"At": func(c *internal.CallCtxt) {
+
 			x, i := c.BigInt(0), c.Uint(1)
 			if c.Do() {
 				c.Ret, c.Err = At(x, i)
 			}
 		},
-	}, {
-		Name: "Set",
-		Params: []internal.Param{
-			{Kind: adt.IntKind},
-			{Kind: adt.IntKind},
-			{Kind: adt.IntKind},
-		},
-		Result: adt.IntKind,
-		Func: func(c *internal.CallCtxt) {
+		"Set": func(c *internal.CallCtxt) {
+
 			x, i, bit := c.BigInt(0), c.Int(1), c.Uint(2)
 			if c.Do() {
 				c.Ret = Set(x, i, bit)
 			}
 		},
-	}, {
-		Name: "And",
-		Params: []internal.Param{
-			{Kind: adt.IntKind},
-			{Kind: adt.IntKind},
-		},
-		Result: adt.IntKind,
-		Func: func(c *internal.CallCtxt) {
+		"And": func(c *internal.CallCtxt) {
+
 			a, b := c.BigInt(0), c.BigInt(1)
 			if c.Do() {
 				c.Ret = And(a, b)
 			}
 		},
-	}, {
-		Name: "Or",
-		Params: []internal.Param{
-			{Kind: adt.IntKind},
-			{Kind: adt.IntKind},
-		},
-		Result: adt.IntKind,
-		Func: func(c *internal.CallCtxt) {
+		"Or": func(c *internal.CallCtxt) {
+
 			a, b := c.BigInt(0), c.BigInt(1)
 			if c.Do() {
 				c.Ret = Or(a, b)
 			}
 		},
-	}, {
-		Name: "Xor",
-		Params: []internal.Param{
-			{Kind: adt.IntKind},
-			{Kind: adt.IntKind},
-		},
-		Result: adt.IntKind,
-		Func: func(c *internal.CallCtxt) {
+		"Xor": func(c *internal.CallCtxt) {
+
 			a, b := c.BigInt(0), c.BigInt(1)
 			if c.Do() {
 				c.Ret = Xor(a, b)
 			}
 		},
-	}, {
-		Name: "Clear",
-		Params: []internal.Param{
-			{Kind: adt.IntKind},
-			{Kind: adt.IntKind},
-		},
-		Result: adt.IntKind,
-		Func: func(c *internal.CallCtxt) {
+		"Clear": func(c *internal.CallCtxt) {
+
 			a, b := c.BigInt(0), c.BigInt(1)
 			if c.Do() {
 				c.Ret = Clear(a, b)
 			}
 		},
-	}, {
-		Name: "OnesCount",
-		Params: []internal.Param{
-			{Kind: adt.IntKind},
-		},
-		Result: adt.IntKind,
-		Func: func(c *internal.CallCtxt) {
+		"OnesCount": func(c *internal.CallCtxt) {
+
 			x := c.BigInt(0)
 			if c.Do() {
 				c.Ret = OnesCount(x)
 			}
 		},
-	}, {
-		Name: "Len",
-		Params: []internal.Param{
-			{Kind: adt.IntKind},
-		},
-		Result: adt.IntKind,
-		Func: func(c *internal.CallCtxt) {
+		"Len": func(c *internal.CallCtxt) {
+
 			x := c.BigInt(0)
 			if c.Do() {
 				c.Ret = Len(x)
 			}
 		},
-	}},
+	},
+	CUE: `{
+	_
+	exports: {
+		Xor: {
+			in: [...#Arg] & [{
+				name: "a"
+				type: int
+			}, {
+				name: "b"
+				type: int
+			}]
+			out: int
+		}
+		Set: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: int
+			}, {
+				name: "i"
+				type: >=-9223372036854775808 & <=9223372036854775807 & int
+			}, {
+				name: "bit"
+				type: >=0 & <=18446744073709551615 & int
+			}]
+			out: int
+		}
+		Rsh: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: int
+			}, {
+				name: "n"
+				type: >=0 & <=18446744073709551615 & int
+			}]
+			out: int
+		}
+		Or: {
+			in: [...#Arg] & [{
+				name: "a"
+				type: int
+			}, {
+				name: "b"
+				type: int
+			}]
+			out: int
+		}
+		OnesCount: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: int
+			}]
+			out: >=-9223372036854775808 & <=9223372036854775807 & int
+		}
+		Lsh: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: int
+			}, {
+				name: "n"
+				type: >=0 & <=18446744073709551615 & int
+			}]
+			out: int
+		}
+		Len: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: int
+			}]
+			out: >=-9223372036854775808 & <=9223372036854775807 & int
+		}
+		Clear: {
+			in: [...#Arg] & [{
+				name: "a"
+				type: int
+			}, {
+				name: "b"
+				type: int
+			}]
+			out: int
+		}
+		At: {
+			in: [...#Arg] & [{
+				name: "x"
+				type: int
+			}, {
+				name: "i"
+				type: >=0 & <=18446744073709551615 & int
+			}]
+			out: >=0 & <=18446744073709551615 & int
+		}
+		And: {
+			in: [...#Arg] & [{
+				name: "a"
+				type: int
+			}, {
+				name: "b"
+				type: int
+			}]
+			out: int
+		}
+	}
+}`,
 }

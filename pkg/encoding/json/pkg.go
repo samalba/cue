@@ -14,116 +14,146 @@ func init() {
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
-	Native: []*internal.Builtin{{
-		Name: "Valid",
-		Params: []internal.Param{
-			{Kind: adt.BytesKind | adt.StringKind},
-		},
-		Result: adt.BoolKind,
-		Func: func(c *internal.CallCtxt) {
+	Funcs: map[string]func(c *internal.CallCtxt){
+		"Valid": func(c *internal.CallCtxt) {
+
 			data := c.Bytes(0)
 			if c.Do() {
 				c.Ret = Valid(data)
 			}
 		},
-	}, {
-		Name: "Compact",
-		Params: []internal.Param{
-			{Kind: adt.BytesKind | adt.StringKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"Compact": func(c *internal.CallCtxt) {
+
 			src := c.Bytes(0)
 			if c.Do() {
 				c.Ret, c.Err = Compact(src)
 			}
 		},
-	}, {
-		Name: "Indent",
-		Params: []internal.Param{
-			{Kind: adt.BytesKind | adt.StringKind},
-			{Kind: adt.StringKind},
-			{Kind: adt.StringKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"Indent": func(c *internal.CallCtxt) {
+
 			src, prefix, indent := c.Bytes(0), c.String(1), c.String(2)
 			if c.Do() {
 				c.Ret, c.Err = Indent(src, prefix, indent)
 			}
 		},
-	}, {
-		Name: "HTMLEscape",
-		Params: []internal.Param{
-			{Kind: adt.BytesKind | adt.StringKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"HTMLEscape": func(c *internal.CallCtxt) {
+
 			src := c.Bytes(0)
 			if c.Do() {
 				c.Ret = HTMLEscape(src)
 			}
 		},
-	}, {
-		Name: "Marshal",
-		Params: []internal.Param{
-			{Kind: adt.TopKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"Marshal": func(c *internal.CallCtxt) {
+
 			v := c.Value(0)
 			if c.Do() {
 				c.Ret, c.Err = Marshal(v)
 			}
 		},
-	}, {
-		Name: "MarshalStream",
-		Params: []internal.Param{
-			{Kind: adt.TopKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"MarshalStream": func(c *internal.CallCtxt) {
+
 			v := c.Value(0)
 			if c.Do() {
 				c.Ret, c.Err = MarshalStream(v)
 			}
 		},
-	}, {
-		Name: "UnmarshalStream",
-		Params: []internal.Param{
-			{Kind: adt.BytesKind | adt.StringKind},
-		},
-		Result: adt.TopKind,
-		Func: func(c *internal.CallCtxt) {
+		"UnmarshalStream": func(c *internal.CallCtxt) {
+
 			data := c.Bytes(0)
 			if c.Do() {
 				c.Ret, c.Err = UnmarshalStream(data)
 			}
 		},
-	}, {
-		Name: "Unmarshal",
-		Params: []internal.Param{
-			{Kind: adt.BytesKind | adt.StringKind},
-		},
-		Result: adt.TopKind,
-		Func: func(c *internal.CallCtxt) {
+		"Unmarshal": func(c *internal.CallCtxt) {
+
 			b := c.Bytes(0)
 			if c.Do() {
 				c.Ret, c.Err = Unmarshal(b)
 			}
 		},
-	}, {
-		Name: "Validate",
-		Params: []internal.Param{
-			{Kind: adt.BytesKind | adt.StringKind},
-			{Kind: adt.TopKind},
-		},
-		Result: adt.BoolKind,
-		Func: func(c *internal.CallCtxt) {
+		"Validate": func(c *internal.CallCtxt) {
+
 			b, v := c.Bytes(0), c.Value(1)
 			if c.Do() {
 				c.Ret, c.Err = Validate(b, v)
 			}
 		},
-	}},
+	},
+	CUE: `{
+	_
+	exports: {
+		Validate: {
+			in: [...#Arg] & [{
+				name: "b"
+				type: bytes | string
+			}, {
+				name: "v"
+				type: _
+			}]
+			out: bool
+		}
+		UnmarshalStream: {
+			in: [...#Arg] & [{
+				name: "data"
+				type: bytes | string
+			}]
+			out: _
+		}
+		Unmarshal: {
+			in: [...#Arg] & [{
+				name: "b"
+				type: bytes | string
+			}]
+			out: _
+		}
+		MarshalStream: {
+			in: [...#Arg] & [{
+				name: "v"
+				type: _
+			}]
+			out: string
+		}
+		Marshal: {
+			in: [...#Arg] & [{
+				name: "v"
+				type: _
+			}]
+			out: string
+		}
+		Indent: {
+			in: [...#Arg] & [{
+				name: "src"
+				type: bytes | string
+			}, {
+				name: "prefix"
+				type: string
+			}, {
+				name: "indent"
+				type: string
+			}]
+			out: string
+		}
+		HTMLEscape: {
+			in: [...#Arg] & [{
+				name: "src"
+				type: bytes | string
+			}]
+			out: string
+		}
+		Compact: {
+			in: [...#Arg] & [{
+				name: "src"
+				type: bytes | string
+			}]
+			out: string
+		}
+		Valid: {
+			in: [...#Arg] & [{
+				name: "data"
+				type: bytes | string
+			}]
+			out: bool
+		}
+	}
+}`,
 }

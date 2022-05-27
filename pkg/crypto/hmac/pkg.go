@@ -14,43 +14,39 @@ func init() {
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
-	Native: []*internal.Builtin{{
-		Name:  "MD5",
-		Const: "\"MD5\"",
-	}, {
-		Name:  "SHA1",
-		Const: "\"SHA1\"",
-	}, {
-		Name:  "SHA224",
-		Const: "\"SHA224\"",
-	}, {
-		Name:  "SHA256",
-		Const: "\"SHA256\"",
-	}, {
-		Name:  "SHA384",
-		Const: "\"SHA384\"",
-	}, {
-		Name:  "SHA512",
-		Const: "\"SHA512\"",
-	}, {
-		Name:  "SHA512_224",
-		Const: "\"SHA512_224\"",
-	}, {
-		Name:  "SHA512_256",
-		Const: "\"SHA512_256\"",
-	}, {
-		Name: "Sign",
-		Params: []internal.Param{
-			{Kind: adt.StringKind},
-			{Kind: adt.BytesKind | adt.StringKind},
-			{Kind: adt.BytesKind | adt.StringKind},
-		},
-		Result: adt.BytesKind | adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+	Funcs: map[string]func(c *internal.CallCtxt){
+		"Sign": func(c *internal.CallCtxt) {
+
 			hashName, key, data := c.String(0), c.Bytes(1), c.Bytes(2)
 			if c.Do() {
 				c.Ret, c.Err = Sign(hashName, key, data)
 			}
 		},
-	}},
+	},
+	CUE: `{
+	_
+	exports: {
+		Sign: {
+			in: [...#Arg] & [{
+				name: "hashName"
+				type: string
+			}, {
+				name: "key"
+				type: bytes | string
+			}, {
+				name: "data"
+				type: bytes | string
+			}]
+			out: bytes | string
+		}
+		SHA512_256?: "SHA512_256"
+		SHA512_224?: "SHA512_224"
+		SHA512?:     "SHA512"
+		SHA384?:     "SHA384"
+		SHA256?:     "SHA256"
+		SHA224?:     "SHA224"
+		SHA1?:       "SHA1"
+		MD5?:        "MD5"
+	}
+}`,
 }

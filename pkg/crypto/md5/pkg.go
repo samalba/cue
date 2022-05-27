@@ -14,23 +14,27 @@ func init() {
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
-	Native: []*internal.Builtin{{
-		Name:  "Size",
-		Const: "16",
-	}, {
-		Name:  "BlockSize",
-		Const: "64",
-	}, {
-		Name: "Sum",
-		Params: []internal.Param{
-			{Kind: adt.BytesKind | adt.StringKind},
-		},
-		Result: adt.BytesKind | adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+	Funcs: map[string]func(c *internal.CallCtxt){
+		"Sum": func(c *internal.CallCtxt) {
+
 			data := c.Bytes(0)
 			if c.Do() {
 				c.Ret = Sum(data)
 			}
 		},
-	}},
+	},
+	CUE: `{
+	_
+	exports: {
+		Size?:      16
+		BlockSize?: 64
+		Sum: {
+			in: [...#Arg] & [{
+				name: "data"
+				type: bytes | string
+			}]
+			out: bytes | string
+		}
+	}
+}`,
 }

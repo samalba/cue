@@ -14,7 +14,7 @@ func init() {
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
-	Native: []*internal.Builtin{},
+	Funcs: map[string]func(c *internal.CallCtxt){},
 	CUE: `{
 	Run: {
 		$id:  *"tool/exec.Run" | "exec"
@@ -28,5 +28,6 @@ var pkg = &internal.Package{
 		stdin:   *null | string | bytes
 		success: bool
 	}
+	exports: {}
 }`,
 }

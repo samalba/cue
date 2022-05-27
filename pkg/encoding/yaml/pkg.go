@@ -14,79 +14,101 @@ func init() {
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
-	Native: []*internal.Builtin{{
-		Name: "Marshal",
-		Params: []internal.Param{
-			{Kind: adt.TopKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+	Funcs: map[string]func(c *internal.CallCtxt){
+		"Marshal": func(c *internal.CallCtxt) {
+
 			v := c.Value(0)
 			if c.Do() {
 				c.Ret, c.Err = Marshal(v)
 			}
 		},
-	}, {
-		Name: "MarshalStream",
-		Params: []internal.Param{
-			{Kind: adt.TopKind},
-		},
-		Result: adt.StringKind,
-		Func: func(c *internal.CallCtxt) {
+		"MarshalStream": func(c *internal.CallCtxt) {
+
 			v := c.Value(0)
 			if c.Do() {
 				c.Ret, c.Err = MarshalStream(v)
 			}
 		},
-	}, {
-		Name: "Unmarshal",
-		Params: []internal.Param{
-			{Kind: adt.BytesKind | adt.StringKind},
-		},
-		Result: adt.TopKind,
-		Func: func(c *internal.CallCtxt) {
+		"Unmarshal": func(c *internal.CallCtxt) {
+
 			data := c.Bytes(0)
 			if c.Do() {
 				c.Ret, c.Err = Unmarshal(data)
 			}
 		},
-	}, {
-		Name: "UnmarshalStream",
-		Params: []internal.Param{
-			{Kind: adt.BytesKind | adt.StringKind},
-		},
-		Result: adt.TopKind,
-		Func: func(c *internal.CallCtxt) {
+		"UnmarshalStream": func(c *internal.CallCtxt) {
+
 			data := c.Bytes(0)
 			if c.Do() {
 				c.Ret, c.Err = UnmarshalStream(data)
 			}
 		},
-	}, {
-		Name: "Validate",
-		Params: []internal.Param{
-			{Kind: adt.BytesKind | adt.StringKind},
-			{Kind: adt.TopKind},
-		},
-		Result: adt.BoolKind,
-		Func: func(c *internal.CallCtxt) {
+		"Validate": func(c *internal.CallCtxt) {
+
 			b, v := c.Bytes(0), c.Value(1)
 			if c.Do() {
 				c.Ret, c.Err = Validate(b, v)
 			}
 		},
-	}, {
-		Name: "ValidatePartial",
-		Params: []internal.Param{
-			{Kind: adt.BytesKind | adt.StringKind},
-			{Kind: adt.TopKind},
-		},
-		Result: adt.BoolKind,
-		Func: func(c *internal.CallCtxt) {
+		"ValidatePartial": func(c *internal.CallCtxt) {
+
 			b, v := c.Bytes(0), c.Value(1)
 			if c.Do() {
 				c.Ret, c.Err = ValidatePartial(b, v)
 			}
 		},
-	}},
+	},
+	CUE: `{
+	_
+	exports: {
+		ValidatePartial: {
+			in: [...#Arg] & [{
+				name: "b"
+				type: bytes | string
+			}, {
+				name: "v"
+				type: _
+			}]
+			out: bool
+		}
+		Validate: {
+			in: [...#Arg] & [{
+				name: "b"
+				type: bytes | string
+			}, {
+				name: "v"
+				type: _
+			}]
+			out: bool
+		}
+		UnmarshalStream: {
+			in: [...#Arg] & [{
+				name: "data"
+				type: bytes | string
+			}]
+			out: _
+		}
+		Unmarshal: {
+			in: [...#Arg] & [{
+				name: "data"
+				type: bytes | string
+			}]
+			out: _
+		}
+		MarshalStream: {
+			in: [...#Arg] & [{
+				name: "v"
+				type: _
+			}]
+			out: string
+		}
+		Marshal: {
+			in: [...#Arg] & [{
+				name: "v"
+				type: _
+			}]
+			out: string
+		}
+	}
+}`,
 }

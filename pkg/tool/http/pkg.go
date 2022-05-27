@@ -14,7 +14,7 @@ func init() {
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
-	Native: []*internal.Builtin{},
+	Funcs: map[string]func(c *internal.CallCtxt){},
 	CUE: `{
 	Get: Do & {
 		method: "GET"
@@ -28,6 +28,7 @@ var pkg = &internal.Package{
 	Delete: Do & {
 		method: "DELETE"
 	}
+	exports: {}
 	Do: {
 		$id:    *"tool/http.Do" | "http"
 		method: string
