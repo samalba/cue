@@ -5,34 +5,27 @@ package tabwriter
 import (
 	"cuelang.org/go/internal/core/adt"
 	"cuelang.org/go/pkg/internal"
+
+	_ "embed"
 )
 
 func init() {
 	internal.Register("text/tabwriter", pkg)
 }
 
+//go:embed pkg.cue
+var cueDecls string
+
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
 	Funcs: map[string]func(c *internal.CallCtxt){
 		"Write": func(c *internal.CallCtxt) {
-
 			data := c.Value(0)
 			if c.Do() {
 				c.Ret, c.Err = Write(data)
 			}
 		},
 	},
-	CUE: `{
-	_
-	exports: {
-		Write: {
-			in: [...#Arg] & [{
-				name: "data"
-				type: _
-			}]
-			out: string
-		}
-	}
-}`,
+	CUE: cueDecls,
 }

@@ -5,11 +5,16 @@ package net
 import (
 	"cuelang.org/go/internal/core/adt"
 	"cuelang.org/go/pkg/internal"
+
+	_ "embed"
 )
 
 func init() {
 	internal.Register("net", pkg)
 }
+
+//go:embed pkg.cue
+var cueDecls string
 
 var _ = adt.TopKind // in case the adt package isn't used
 
@@ -118,134 +123,5 @@ var pkg = &internal.Package{
 			}
 		},
 	},
-	CUE: `{
-	#IPAddr: string | bytes | #Octets
-	exports: {
-		UnspecifiedIP?: {
-			out: bool
-			in: [{
-				name: "ip"
-				type: _
-			}]
-		}
-		ToIP4?: {
-			out: [...]
-			in: [{
-				name: "ip"
-				type: string | bytes | [...>=0 & <=255 & int]
-			}]
-		}
-		ToIP16?: {
-			out: [...]
-			in: [{
-				name: "ip"
-				type: _
-			}]
-		}
-		SplitHostPort?: {
-			out: [...string]
-			in: [{
-				name: "s"
-				type: string
-			}]
-		}
-		ParseIP?: {
-			out: [...]
-			in: [{
-				name: "s"
-				type: string
-			}]
-		}
-		MulticastIP?: {
-			out: bool
-			in: [{
-				name: "ip"
-				type: _
-			}]
-		}
-		LoopbackIP?: {
-			out: bool
-			in: [{
-				name: "ip"
-				type: _
-			}]
-		}
-		LinkLocalUnicastIP?: {
-			out: bool
-			in: [{
-				name: "ip"
-				type: _
-			}]
-		}
-		LinkLocalMulticastIP?: {
-			out: bool
-			in: [{
-				name: "ip"
-				type: _
-			}]
-		}
-		JoinHostPort?: {
-			out: string
-			in: [{
-				name: "host"
-				type: _
-			}, {
-				name: "port"
-				type: _
-			}]
-		}
-		InterfaceLocalMulticastIP?: {
-			out: bool
-			in: [{
-				name: "ip"
-				type: _
-			}]
-		}
-		IPv6len?: 16
-		IPv4len?: 4
-		IPv4?: {
-			out: bool
-			in: [{
-				name: "ip"
-				type: _
-			}]
-		}
-		IPString?: {
-			out: string
-			in: [{
-				name: "ip"
-				type: _
-			}]
-		}
-		IPCIDR?: {
-			out: bool
-			in: [{
-				name: "ip"
-				type: _
-			}]
-		}
-		IP?: {
-			out: bool
-			in: [{
-				name: "ip"
-				type: _
-			}]
-		}
-		GlobalUnicastIP?: {
-			out: bool
-			in: [{
-				name: "ip"
-				type: _
-			}]
-		}
-		FQDN?: {
-			out: bool
-			in: [{
-				name: "s"
-				type: string
-			}]
-		}
-	}
-	#Octets: [...int & >=0 & <=255]
-}`,
+	CUE: cueDecls,
 }

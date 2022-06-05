@@ -5,375 +5,147 @@ package list
 import (
 	"cuelang.org/go/internal/core/adt"
 	"cuelang.org/go/pkg/internal"
+
+	_ "embed"
 )
 
 func init() {
 	internal.Register("list", pkg)
 }
 
+//go:embed pkg.cue
+var cueDecls string
+
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
 	Funcs: map[string]func(c *internal.CallCtxt){
 		"Drop": func(c *internal.CallCtxt) {
-
 			x, n := c.List(0), c.Int(1)
 			if c.Do() {
 				c.Ret, c.Err = Drop(x, n)
 			}
 		},
 		"FlattenN": func(c *internal.CallCtxt) {
-
 			xs, depth := c.Value(0), c.Int(1)
 			if c.Do() {
 				c.Ret, c.Err = FlattenN(xs, depth)
 			}
 		},
 		"Repeat": func(c *internal.CallCtxt) {
-
 			x, count := c.List(0), c.Int(1)
 			if c.Do() {
 				c.Ret, c.Err = Repeat(x, count)
 			}
 		},
 		"Concat": func(c *internal.CallCtxt) {
-
 			a := c.List(0)
 			if c.Do() {
 				c.Ret, c.Err = Concat(a)
 			}
 		},
 		"Take": func(c *internal.CallCtxt) {
-
 			x, n := c.List(0), c.Int(1)
 			if c.Do() {
 				c.Ret, c.Err = Take(x, n)
 			}
 		},
 		"Slice": func(c *internal.CallCtxt) {
-
 			x, i, j := c.List(0), c.Int(1), c.Int(2)
 			if c.Do() {
 				c.Ret, c.Err = Slice(x, i, j)
 			}
 		},
 		"MinItems": func(c *internal.CallCtxt) {
-
 			a, n := c.List(0), c.Int(1)
 			if c.Do() {
 				c.Ret = MinItems(a, n)
 			}
 		},
 		"MaxItems": func(c *internal.CallCtxt) {
-
 			a, n := c.List(0), c.Int(1)
 			if c.Do() {
 				c.Ret = MaxItems(a, n)
 			}
 		},
 		"UniqueItems": func(c *internal.CallCtxt) {
-
 			a := c.List(0)
 			if c.Do() {
 				c.Ret = UniqueItems(a)
 			}
 		},
 		"Contains": func(c *internal.CallCtxt) {
-
 			a, v := c.List(0), c.Value(1)
 			if c.Do() {
 				c.Ret = Contains(a, v)
 			}
 		},
 		"Avg": func(c *internal.CallCtxt) {
-
 			xs := c.DecimalList(0)
 			if c.Do() {
 				c.Ret, c.Err = Avg(xs)
 			}
 		},
 		"Max": func(c *internal.CallCtxt) {
-
 			xs := c.DecimalList(0)
 			if c.Do() {
 				c.Ret, c.Err = Max(xs)
 			}
 		},
 		"Min": func(c *internal.CallCtxt) {
-
 			xs := c.DecimalList(0)
 			if c.Do() {
 				c.Ret, c.Err = Min(xs)
 			}
 		},
 		"Product": func(c *internal.CallCtxt) {
-
 			xs := c.DecimalList(0)
 			if c.Do() {
 				c.Ret, c.Err = Product(xs)
 			}
 		},
 		"Range": func(c *internal.CallCtxt) {
-
 			start, limit, step := c.Decimal(0), c.Decimal(1), c.Decimal(2)
 			if c.Do() {
 				c.Ret, c.Err = Range(start, limit, step)
 			}
 		},
 		"Sum": func(c *internal.CallCtxt) {
-
 			xs := c.DecimalList(0)
 			if c.Do() {
 				c.Ret, c.Err = Sum(xs)
 			}
 		},
 		"Sort": func(c *internal.CallCtxt) {
-
 			list, cmp := c.List(0), c.Value(1)
 			if c.Do() {
 				c.Ret, c.Err = Sort(list, cmp)
 			}
 		},
 		"SortStable": func(c *internal.CallCtxt) {
-
 			list, cmp := c.List(0), c.Value(1)
 			if c.Do() {
 				c.Ret, c.Err = SortStable(list, cmp)
 			}
 		},
 		"SortStrings": func(c *internal.CallCtxt) {
-
 			a := c.StringList(0)
 			if c.Do() {
 				c.Ret = SortStrings(a)
 			}
 		},
 		"IsSorted": func(c *internal.CallCtxt) {
-
 			list, cmp := c.List(0), c.Value(1)
 			if c.Do() {
 				c.Ret = IsSorted(list, cmp)
 			}
 		},
 		"IsSortedStrings": func(c *internal.CallCtxt) {
-
 			a := c.StringList(0)
 			if c.Do() {
 				c.Ret = IsSortedStrings(a)
 			}
 		},
 	},
-	CUE: `{
-	Comparer: {
-		T:    _
-		x:    T
-		y:    T
-		less: bool
-	}
-	Ascending: {
-		Comparer
-		T:    number | string
-		x:    T
-		y:    T
-		less: true && x < y
-	}
-	exports: {
-		UniqueItems: {
-			in: [...#Arg] & [{
-				name: "a"
-				type: [...]
-			}]
-			out: bool
-		}
-		Take: {
-			in: [...#Arg] & [{
-				name: "x"
-				type: [...]
-			}, {
-				name: "n"
-				type: >=-9223372036854775808 & <=9223372036854775807 & int
-			}]
-			out: [...]
-		}
-		Sum: {
-			in: [...#Arg] & [{
-				name: "xs"
-				type: [...number]
-			}]
-			out: number
-		}
-		SortStrings: {
-			in: [...#Arg] & [{
-				name: "a"
-				type: [...string]
-			}]
-			out: [...string]
-		}
-		SortStable: {
-			in: [...#Arg] & [{
-				name: "list"
-				type: [...]
-			}, {
-				name: "cmp"
-				type: _
-			}]
-			out: [...]
-		}
-		Sort: {
-			in: [...#Arg] & [{
-				name: "list"
-				type: [...]
-			}, {
-				name: "cmp"
-				type: _
-			}]
-			out: [...]
-		}
-		Slice: {
-			in: [...#Arg] & [{
-				name: "x"
-				type: [...]
-			}, {
-				name: "i"
-				type: >=-9223372036854775808 & <=9223372036854775807 & int
-			}, {
-				name: "j"
-				type: >=-9223372036854775808 & <=9223372036854775807 & int
-			}]
-			out: [...]
-		}
-		Repeat: {
-			in: [...#Arg] & [{
-				name: "x"
-				type: [...]
-			}, {
-				name: "count"
-				type: >=-9223372036854775808 & <=9223372036854775807 & int
-			}]
-			out: [...]
-		}
-		Range: {
-			in: [...#Arg] & [{
-				name: "start"
-				type: number
-			}, {
-				name: "limit"
-				type: number
-			}, {
-				name: "step"
-				type: number
-			}]
-			out: [...number]
-		}
-		Product: {
-			in: [...#Arg] & [{
-				name: "xs"
-				type: [...number]
-			}]
-			out: number
-		}
-		MinItems: {
-			in: [...#Arg] & [{
-				name: "a"
-				type: [...]
-			}, {
-				name: "n"
-				type: >=-9223372036854775808 & <=9223372036854775807 & int
-			}]
-			out: bool
-		}
-		Min: {
-			in: [...#Arg] & [{
-				name: "xs"
-				type: [...number]
-			}]
-			out: number
-		}
-		MaxItems: {
-			in: [...#Arg] & [{
-				name: "a"
-				type: [...]
-			}, {
-				name: "n"
-				type: >=-9223372036854775808 & <=9223372036854775807 & int
-			}]
-			out: bool
-		}
-		Max: {
-			in: [...#Arg] & [{
-				name: "xs"
-				type: [...number]
-			}]
-			out: number
-		}
-		IsSortedStrings: {
-			in: [...#Arg] & [{
-				name: "a"
-				type: [...string]
-			}]
-			out: bool
-		}
-		IsSorted: {
-			in: [...#Arg] & [{
-				name: "list"
-				type: [...]
-			}, {
-				name: "cmp"
-				type: _
-			}]
-			out: bool
-		}
-		FlattenN: {
-			in: [...#Arg] & [{
-				name: "xs"
-				type: _
-			}, {
-				name: "depth"
-				type: >=-9223372036854775808 & <=9223372036854775807 & int
-			}]
-			out: [...]
-		}
-		Drop: {
-			in: [...#Arg] & [{
-				name: "x"
-				type: [...]
-			}, {
-				name: "n"
-				type: >=-9223372036854775808 & <=9223372036854775807 & int
-			}]
-			out: [...]
-		}
-		Contains: {
-			in: [...#Arg] & [{
-				name: "a"
-				type: [...]
-			}, {
-				name: "v"
-				type: _
-			}]
-			out: bool
-		}
-		Concat: {
-			in: [...#Arg] & [{
-				name: "a"
-				type: [...]
-			}]
-			out: [...]
-		}
-		Avg: {
-			in: [...#Arg] & [{
-				name: "xs"
-				type: [...number]
-			}]
-			out: number
-		}
-	}
-	Descending: {
-		Comparer
-		T:    number | string
-		x:    T
-		y:    T
-		less: x > y
-	}
-}`,
+	CUE: cueDecls,
 }

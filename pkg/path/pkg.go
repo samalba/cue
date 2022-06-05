@@ -5,270 +5,105 @@ package path
 import (
 	"cuelang.org/go/internal/core/adt"
 	"cuelang.org/go/pkg/internal"
+
+	_ "embed"
 )
 
 func init() {
 	internal.Register("path", pkg)
 }
 
+//go:embed pkg.cue
+var cueDecls string
+
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
 	Funcs: map[string]func(c *internal.CallCtxt){
 		"Match": func(c *internal.CallCtxt) {
-
-			pattern, name, o := c.String(0), c.String(1), c.OS(2)
+			pattern, name, os := c.String(0), c.String(1), c.String(2)
 			if c.Do() {
-				c.Ret, c.Err = Match(pattern, name, o)
+				c.Ret, c.Err = Match(pattern, name, os)
 			}
 		},
 		"Clean": func(c *internal.CallCtxt) {
-
-			path, os := c.String(0), c.OS(1)
+			path, os := c.String(0), c.String(1)
 			if c.Do() {
 				c.Ret = Clean(path, os)
 			}
 		},
 		"ToSlash": func(c *internal.CallCtxt) {
-
-			path, os := c.String(0), c.OS(1)
+			path, os := c.String(0), c.String(1)
 			if c.Do() {
 				c.Ret = ToSlash(path, os)
 			}
 		},
 		"FromSlash": func(c *internal.CallCtxt) {
-
-			path, os := c.String(0), c.OS(1)
+			path, os := c.String(0), c.String(1)
 			if c.Do() {
 				c.Ret = FromSlash(path, os)
 			}
 		},
 		"SplitList": func(c *internal.CallCtxt) {
-
-			path, os := c.String(0), c.OS(1)
+			path, os := c.String(0), c.String(1)
 			if c.Do() {
 				c.Ret = SplitList(path, os)
 			}
 		},
 		"Split": func(c *internal.CallCtxt) {
-
-			path, os := c.String(0), c.OS(1)
+			path, os := c.String(0), c.String(1)
 			if c.Do() {
 				c.Ret = Split(path, os)
 			}
 		},
 		"Join": func(c *internal.CallCtxt) {
-
-			elem, os := c.StringList(0), c.OS(1)
+			elem, os := c.StringList(0), c.String(1)
 			if c.Do() {
 				c.Ret = Join(elem, os)
 			}
 		},
 		"Ext": func(c *internal.CallCtxt) {
-
-			path, os := c.String(0), c.OS(1)
+			path, os := c.String(0), c.String(1)
 			if c.Do() {
 				c.Ret = Ext(path, os)
 			}
 		},
 		"Resolve": func(c *internal.CallCtxt) {
-
-			dir, sub, os := c.String(0), c.String(1), c.OS(2)
+			dir, sub, os := c.String(0), c.String(1), c.String(2)
 			if c.Do() {
 				c.Ret = Resolve(dir, sub, os)
 			}
 		},
 		"Rel": func(c *internal.CallCtxt) {
-
-			basepath, targpath, os := c.String(0), c.String(1), c.OS(2)
+			basepath, targpath, os := c.String(0), c.String(1), c.String(2)
 			if c.Do() {
 				c.Ret, c.Err = Rel(basepath, targpath, os)
 			}
 		},
 		"Base": func(c *internal.CallCtxt) {
-
-			path, os := c.String(0), c.OS(1)
+			path, os := c.String(0), c.String(1)
 			if c.Do() {
 				c.Ret = Base(path, os)
 			}
 		},
 		"Dir": func(c *internal.CallCtxt) {
-
-			path, os := c.String(0), c.OS(1)
+			path, os := c.String(0), c.String(1)
 			if c.Do() {
 				c.Ret = Dir(path, os)
 			}
 		},
 		"IsAbs": func(c *internal.CallCtxt) {
-
-			path, os := c.String(0), c.OS(1)
+			path, os := c.String(0), c.String(1)
 			if c.Do() {
 				c.Ret = IsAbs(path, os)
 			}
 		},
 		"VolumeName": func(c *internal.CallCtxt) {
-
-			path, os := c.String(0), c.OS(1)
+			path, os := c.String(0), c.String(1)
 			if c.Do() {
 				c.Ret = VolumeName(path, os)
 			}
 		},
 	},
-	CUE: `{
-	_
-	exports: {
-		Windows?: "windows"
-		VolumeName: {
-			in: [...#Arg] & [{
-				name: "path"
-				type: string
-			}, {
-				name: "os"
-				type: _
-			}]
-			out: string
-		}
-		ToSlash: {
-			in: [...#Arg] & [{
-				name: "path"
-				type: string
-			}, {
-				name: "os"
-				type: _
-			}]
-			out: string
-		}
-		SplitList: {
-			in: [...#Arg] & [{
-				name: "path"
-				type: string
-			}, {
-				name: "os"
-				type: _
-			}]
-			out: [...string]
-		}
-		Resolve: {
-			in: [...#Arg] & [{
-				name: "dir"
-				type: string
-			}, {
-				name: "sub"
-				type: string
-			}, {
-				name: "os"
-				type: _
-			}]
-			out: string
-		}
-		Rel: {
-			in: [...#Arg] & [{
-				name: "basepath"
-				type: string
-			}, {
-				name: "targpath"
-				type: string
-			}, {
-				name: "os"
-				type: _
-			}]
-			out: string
-		}
-		Plan9?: "plan9"
-		IsAbs: {
-			in: [...#Arg] & [{
-				name: "path"
-				type: string
-			}, {
-				name: "os"
-				type: _
-			}]
-			out: bool
-		}
-		FromSlash: {
-			in: [...#Arg] & [{
-				name: "path"
-				type: string
-			}, {
-				name: "os"
-				type: _
-			}]
-			out: string
-		}
-		Ext: {
-			in: [...#Arg] & [{
-				name: "path"
-				type: string
-			}, {
-				name: "os"
-				type: _
-			}]
-			out: string
-		}
-		Dir: {
-			in: [...#Arg] & [{
-				name: "path"
-				type: string
-			}, {
-				name: "os"
-				type: _
-			}]
-			out: string
-		}
-		Clean: {
-			in: [...#Arg] & [{
-				name: "path"
-				type: string
-			}, {
-				name: "os"
-				type: _
-			}]
-			out: string
-		}
-		Base: {
-			in: [...#Arg] & [{
-				name: "path"
-				type: string
-			}, {
-				name: "os"
-				type: _
-			}]
-			out: string
-		}
-		Join: {
-			in: [...#Arg] & [{
-				name: "elem"
-				type: [...string]
-			}, {
-				name: "os"
-				type: _
-			}]
-			out: string
-		}
-		Unix?: "unix"
-		Split: {
-			in: [...#Arg] & [{
-				name: "path"
-				type: string
-			}, {
-				name: "os"
-				type: _
-			}]
-			out: [...string]
-		}
-		Match: {
-			in: [...#Arg] & [{
-				name: "pattern"
-				type: string
-			}, {
-				name: "name"
-				type: string
-			}, {
-				name: "o"
-				type: _
-			}]
-			out: bool
-		}
-	}
-}`,
+	CUE: cueDecls,
 }

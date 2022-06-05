@@ -5,187 +5,81 @@ package bits
 import (
 	"cuelang.org/go/internal/core/adt"
 	"cuelang.org/go/pkg/internal"
+
+	_ "embed"
 )
 
 func init() {
 	internal.Register("math/bits", pkg)
 }
 
+//go:embed pkg.cue
+var cueDecls string
+
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
 	Funcs: map[string]func(c *internal.CallCtxt){
 		"Lsh": func(c *internal.CallCtxt) {
-
 			x, n := c.BigInt(0), c.Uint(1)
 			if c.Do() {
 				c.Ret = Lsh(x, n)
 			}
 		},
 		"Rsh": func(c *internal.CallCtxt) {
-
 			x, n := c.BigInt(0), c.Uint(1)
 			if c.Do() {
 				c.Ret = Rsh(x, n)
 			}
 		},
 		"At": func(c *internal.CallCtxt) {
-
 			x, i := c.BigInt(0), c.Uint(1)
 			if c.Do() {
 				c.Ret, c.Err = At(x, i)
 			}
 		},
 		"Set": func(c *internal.CallCtxt) {
-
 			x, i, bit := c.BigInt(0), c.Int(1), c.Uint(2)
 			if c.Do() {
 				c.Ret = Set(x, i, bit)
 			}
 		},
 		"And": func(c *internal.CallCtxt) {
-
 			a, b := c.BigInt(0), c.BigInt(1)
 			if c.Do() {
 				c.Ret = And(a, b)
 			}
 		},
 		"Or": func(c *internal.CallCtxt) {
-
 			a, b := c.BigInt(0), c.BigInt(1)
 			if c.Do() {
 				c.Ret = Or(a, b)
 			}
 		},
 		"Xor": func(c *internal.CallCtxt) {
-
 			a, b := c.BigInt(0), c.BigInt(1)
 			if c.Do() {
 				c.Ret = Xor(a, b)
 			}
 		},
 		"Clear": func(c *internal.CallCtxt) {
-
 			a, b := c.BigInt(0), c.BigInt(1)
 			if c.Do() {
 				c.Ret = Clear(a, b)
 			}
 		},
 		"OnesCount": func(c *internal.CallCtxt) {
-
 			x := c.BigInt(0)
 			if c.Do() {
 				c.Ret = OnesCount(x)
 			}
 		},
 		"Len": func(c *internal.CallCtxt) {
-
 			x := c.BigInt(0)
 			if c.Do() {
 				c.Ret = Len(x)
 			}
 		},
 	},
-	CUE: `{
-	_
-	exports: {
-		Xor: {
-			in: [...#Arg] & [{
-				name: "a"
-				type: int
-			}, {
-				name: "b"
-				type: int
-			}]
-			out: int
-		}
-		Set: {
-			in: [...#Arg] & [{
-				name: "x"
-				type: int
-			}, {
-				name: "i"
-				type: >=-9223372036854775808 & <=9223372036854775807 & int
-			}, {
-				name: "bit"
-				type: >=0 & <=18446744073709551615 & int
-			}]
-			out: int
-		}
-		Rsh: {
-			in: [...#Arg] & [{
-				name: "x"
-				type: int
-			}, {
-				name: "n"
-				type: >=0 & <=18446744073709551615 & int
-			}]
-			out: int
-		}
-		Or: {
-			in: [...#Arg] & [{
-				name: "a"
-				type: int
-			}, {
-				name: "b"
-				type: int
-			}]
-			out: int
-		}
-		OnesCount: {
-			in: [...#Arg] & [{
-				name: "x"
-				type: int
-			}]
-			out: >=-9223372036854775808 & <=9223372036854775807 & int
-		}
-		Lsh: {
-			in: [...#Arg] & [{
-				name: "x"
-				type: int
-			}, {
-				name: "n"
-				type: >=0 & <=18446744073709551615 & int
-			}]
-			out: int
-		}
-		Len: {
-			in: [...#Arg] & [{
-				name: "x"
-				type: int
-			}]
-			out: >=-9223372036854775808 & <=9223372036854775807 & int
-		}
-		Clear: {
-			in: [...#Arg] & [{
-				name: "a"
-				type: int
-			}, {
-				name: "b"
-				type: int
-			}]
-			out: int
-		}
-		At: {
-			in: [...#Arg] & [{
-				name: "x"
-				type: int
-			}, {
-				name: "i"
-				type: >=0 & <=18446744073709551615 & int
-			}]
-			out: >=0 & <=18446744073709551615 & int
-		}
-		And: {
-			in: [...#Arg] & [{
-				name: "a"
-				type: int
-			}, {
-				name: "b"
-				type: int
-			}]
-			out: int
-		}
-	}
-}`,
+	CUE: cueDecls,
 }

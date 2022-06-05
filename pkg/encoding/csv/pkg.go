@@ -5,48 +5,33 @@ package csv
 import (
 	"cuelang.org/go/internal/core/adt"
 	"cuelang.org/go/pkg/internal"
+
+	_ "embed"
 )
 
 func init() {
 	internal.Register("encoding/csv", pkg)
 }
 
+//go:embed pkg.cue
+var cueDecls string
+
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
 	Funcs: map[string]func(c *internal.CallCtxt){
 		"Encode": func(c *internal.CallCtxt) {
-
 			x := c.Value(0)
 			if c.Do() {
 				c.Ret, c.Err = Encode(x)
 			}
 		},
 		"Decode": func(c *internal.CallCtxt) {
-
 			r := c.Reader(0)
 			if c.Do() {
 				c.Ret, c.Err = Decode(r)
 			}
 		},
 	},
-	CUE: `{
-	_
-	exports: {
-		Encode: {
-			in: [...#Arg] & [{
-				name: "x"
-				type: _
-			}]
-			out: string
-		}
-		Decode: {
-			in: [...#Arg] & [{
-				name: "r"
-				type: bytes | string
-			}]
-			out: [...]
-		}
-	}
-}`,
+	CUE: cueDecls,
 }

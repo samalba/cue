@@ -15,7 +15,7 @@
 package path
 
 // OS must be a valid runtime.GOOS value or "unix".
-type OS string
+type OS = string
 
 const (
 	Unix    OS = "unix"
@@ -46,7 +46,7 @@ type osInfo interface {
 	sameWord(a, b string) bool
 }
 
-func getOS(o OS) os {
+func getOS(o string) os {
 	switch o {
 	case Windows:
 		return windows

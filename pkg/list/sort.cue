@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// list doc comment
 package list
 
 // A Comparer specifies whether one value is strictly less than another value.

@@ -5,26 +5,20 @@ package cli
 import (
 	"cuelang.org/go/internal/core/adt"
 	"cuelang.org/go/pkg/internal"
+
+	_ "embed"
 )
 
 func init() {
 	internal.Register("tool/cli", pkg)
 }
 
+//go:embed pkg.cue
+var cueDecls string
+
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
 	Funcs: map[string]func(c *internal.CallCtxt){},
-	CUE: `{
-	Print: {
-		$id:  *"tool/cli.Print" | "print"
-		text: string
-	}
-	exports: {}
-	Ask: {
-		$id:      "tool/cli.Ask"
-		prompt:   string
-		response: string | bool
-	}
-}`,
+	CUE:   cueDecls,
 }

@@ -201,8 +201,12 @@ func UnspecifiedIP(ip cue.Value) bool {
 // }
 //
 //cue:func {
-//	in: ip: #IPAddr
-//}
+//	in: [{
+//		name: "ip"
+//		type: #IPAddr
+//	}]
+//	out: #Octets
+// }
 func ToIP4(ip cue.Value) ([]uint, error) {
 	ipdata := netGetIP(ip)
 	if ipdata == nil {

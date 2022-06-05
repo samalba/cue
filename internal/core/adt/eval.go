@@ -225,7 +225,7 @@ func (c *OpContext) Unify(v *Vertex, state VertexStatus) {
 
 		// Clear any remaining error.
 		if err := c.Err(); err != nil {
-			panic("uncaught error")
+			panic(fmt.Errorf("uncaught error: %v", err))
 		}
 
 		// Set the cache to a cycle error to ensure a cyclic reference will result
@@ -1745,10 +1745,9 @@ func valueError(v Value) *ValueError {
 // addStruct collates the declarations of a struct.
 //
 // addStruct fulfills two additional pivotal functions:
-//   1) Implement vertex unification (this happens through De Bruijn indices
-//      combined with proper set up of Environments).
-//   2) Implied closedness for definitions.
-//
+//  1. Implement vertex unification (this happens through De Bruijn indices
+//     combined with proper set up of Environments).
+//  2. Implied closedness for definitions.
 func (n *nodeContext) addStruct(
 	env *Environment,
 	s *StructLit,
@@ -1979,8 +1978,8 @@ func (n *nodeContext) injectDynamic() (progress bool) {
 // or struct fields and not both.
 //
 // addLists should be run after the fixpoint expansion:
-//    - it enforces that comprehensions may not refer to the list itself
-//    - there may be no other fields within the list.
+//   - it enforces that comprehensions may not refer to the list itself
+//   - there may be no other fields within the list.
 //
 // TODO(embeddedScalars): for embedded scalars, there should be another pass
 // of evaluation expressions after expanding lists.

@@ -52,19 +52,33 @@ var ErrBadPattern = errors.New("syntax error in pattern")
 // On Windows, escaping is disabled. Instead, '\\' is treated as
 // path separator.
 //
-func Match(pattern, name string, o OS) (matched bool, err error) {
-	os := getOS(o)
+//cue:func {
+//	in: [{
+//		name: "pattern"
+//		type: string
+//	}, {
+//		name: "name"
+//		type: string
+//	}, {
+//		name: "os"
+//		type: OS
+//	}]
+//	out: bool
+//
+// }
+func Match(pattern, name string, os string) (matched bool, err error) {
+	x := getOS(os)
 Pattern:
 	for len(pattern) > 0 {
 		var star bool
 		var chunk string
-		star, chunk, pattern = scanChunk(pattern, os)
+		star, chunk, pattern = scanChunk(pattern, x)
 		if star && chunk == "" {
 			// Trailing * matches rest of string unless it has a /.
-			return !strings.Contains(name, string(os.Separator)), nil
+			return !strings.Contains(name, string(x.Separator)), nil
 		}
 		// Look for match at current position.
-		t, ok, err := matchChunk(chunk, name, os)
+		t, ok, err := matchChunk(chunk, name, x)
 		// if we're the last chunk, make sure we've exhausted the name
 		// otherwise we'll give a false result even if we could still match
 		// using the star
@@ -78,8 +92,8 @@ Pattern:
 		if star {
 			// Look for match skipping i+1 bytes.
 			// Cannot skip /.
-			for i := 0; i < len(name) && name[i] != os.Separator; i++ {
-				t, ok, err := matchChunk(chunk, name[i+1:], os)
+			for i := 0; i < len(name) && name[i] != x.Separator; i++ {
+				t, ok, err := matchChunk(chunk, name[i+1:], x)
 				if ok {
 					// if we're the last chunk, make sure we exhausted the name
 					if len(pattern) == 0 && len(t) > 0 {

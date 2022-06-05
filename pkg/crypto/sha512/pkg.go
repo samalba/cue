@@ -5,81 +5,45 @@ package sha512
 import (
 	"cuelang.org/go/internal/core/adt"
 	"cuelang.org/go/pkg/internal"
+
+	_ "embed"
 )
 
 func init() {
 	internal.Register("crypto/sha512", pkg)
 }
 
+//go:embed pkg.cue
+var cueDecls string
+
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
 	Funcs: map[string]func(c *internal.CallCtxt){
 		"Sum512": func(c *internal.CallCtxt) {
-
 			data := c.Bytes(0)
 			if c.Do() {
 				c.Ret = Sum512(data)
 			}
 		},
 		"Sum384": func(c *internal.CallCtxt) {
-
 			data := c.Bytes(0)
 			if c.Do() {
 				c.Ret = Sum384(data)
 			}
 		},
 		"Sum512_224": func(c *internal.CallCtxt) {
-
 			data := c.Bytes(0)
 			if c.Do() {
 				c.Ret = Sum512_224(data)
 			}
 		},
 		"Sum512_256": func(c *internal.CallCtxt) {
-
 			data := c.Bytes(0)
 			if c.Do() {
 				c.Ret = Sum512_256(data)
 			}
 		},
 	},
-	CUE: `{
-	_
-	exports: {
-		Sum512_256: {
-			in: [...#Arg] & [{
-				name: "data"
-				type: bytes | string
-			}]
-			out: bytes | string
-		}
-		Sum512_224: {
-			in: [...#Arg] & [{
-				name: "data"
-				type: bytes | string
-			}]
-			out: bytes | string
-		}
-		Sum512: {
-			in: [...#Arg] & [{
-				name: "data"
-				type: bytes | string
-			}]
-			out: bytes | string
-		}
-		Sum384: {
-			in: [...#Arg] & [{
-				name: "data"
-				type: bytes | string
-			}]
-			out: bytes | string
-		}
-		Size384?:   48
-		Size256?:   32
-		Size224?:   28
-		Size?:      64
-		BlockSize?: 128
-	}
-}`,
+	CUE: cueDecls,
 }

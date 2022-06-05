@@ -5,41 +5,27 @@ package ed25519
 import (
 	"cuelang.org/go/internal/core/adt"
 	"cuelang.org/go/pkg/internal"
+
+	_ "embed"
 )
 
 func init() {
 	internal.Register("crypto/ed25519", pkg)
 }
 
+//go:embed pkg.cue
+var cueDecls string
+
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
 	Funcs: map[string]func(c *internal.CallCtxt){
 		"Valid": func(c *internal.CallCtxt) {
-
 			publicKey, message, signature := c.Bytes(0), c.Bytes(1), c.Bytes(2)
 			if c.Do() {
 				c.Ret, c.Err = Valid(publicKey, message, signature)
 			}
 		},
 	},
-	CUE: `{
-	_
-	exports: {
-		PublicKeySize?: 32
-		Valid: {
-			in: [...#Arg] & [{
-				name: "publicKey"
-				type: bytes | string
-			}, {
-				name: "message"
-				type: bytes | string
-			}, {
-				name: "signature"
-				type: bytes | string
-			}]
-			out: bool
-		}
-	}
-}`,
+	CUE: cueDecls,
 }

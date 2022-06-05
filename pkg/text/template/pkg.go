@@ -5,65 +5,39 @@ package template
 import (
 	"cuelang.org/go/internal/core/adt"
 	"cuelang.org/go/pkg/internal"
+
+	_ "embed"
 )
 
 func init() {
 	internal.Register("text/template", pkg)
 }
 
+//go:embed pkg.cue
+var cueDecls string
+
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
 	Funcs: map[string]func(c *internal.CallCtxt){
 		"Execute": func(c *internal.CallCtxt) {
-
 			templ, data := c.String(0), c.Value(1)
 			if c.Do() {
 				c.Ret, c.Err = Execute(templ, data)
 			}
 		},
 		"HTMLEscape": func(c *internal.CallCtxt) {
-
 			s := c.String(0)
 			if c.Do() {
 				c.Ret = HTMLEscape(s)
 			}
 		},
 		"JSEscape": func(c *internal.CallCtxt) {
-
 			s := c.String(0)
 			if c.Do() {
 				c.Ret = JSEscape(s)
 			}
 		},
 	},
-	CUE: `{
-	_
-	exports: {
-		JSEscape: {
-			in: [...#Arg] & [{
-				name: "s"
-				type: string
-			}]
-			out: string
-		}
-		Execute: {
-			in: [...#Arg] & [{
-				name: "templ"
-				type: string
-			}, {
-				name: "data"
-				type: _
-			}]
-			out: string
-		}
-		HTMLEscape: {
-			in: [...#Arg] & [{
-				name: "s"
-				type: string
-			}]
-			out: string
-		}
-	}
-}`,
+	CUE: cueDecls,
 }

@@ -17,33 +17,36 @@ package internal
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 
+	"cuelang.org/go/cue"
 	"cuelang.org/go/cue/errors"
 	"cuelang.org/go/cue/parser"
 	"cuelang.org/go/internal"
 	"cuelang.org/go/internal/core/adt"
 	"cuelang.org/go/internal/core/compile"
 	"cuelang.org/go/internal/core/convert"
+	"cuelang.org/go/internal/core/runtime"
+	"github.com/kr/pretty"
 )
 
 // A Builtin is a Builtin function or constant.
 //
 // A function may return and a constant may be any of the following types:
 //
-//   error (translates to bottom)
-//   nil   (translates to null)
-//   bool
-//   int*
-//   uint*
-//   float64
-//   string
-//   *big.Float
-//   *big.Int
+//	error (translates to bottom)
+//	nil   (translates to null)
+//	bool
+//	int*
+//	uint*
+//	float64
+//	string
+//	*big.Float
+//	*big.Int
 //
-//   For any of the above, including interface{} and these types recursively:
-//   []T
-//   map[string]T
-//
+//	For any of the above, including interface{} and these types recursively:
+//	[]T
+//	map[string]T
 type Builtin struct {
 	Name   string
 	Pkg    adt.Feature
@@ -59,54 +62,125 @@ type Param struct {
 }
 
 type Package struct {
-	Native []*Builtin
-	CUE    string
+	Funcs map[string]func(c *CallCtxt)
+	CUE   string
 }
 
-func (p *Package) MustCompile(ctx *adt.OpContext, importPath string) *adt.Vertex {
-	obj := &adt.Vertex{}
-	pkgLabel := ctx.StringLabel(importPath)
-	st := &adt.StructLit{}
-	if len(p.Native) > 0 {
-		obj.AddConjunct(adt.MakeRootConjunct(nil, st))
-	}
-	for _, b := range p.Native {
-		b.Pkg = pkgLabel
+func newContext() *cue.Context {
+	return (*cue.Context)(runtime.New())
+}
 
-		f := ctx.StringLabel(b.Name) // never starts with _
-		// n := &node{baseValue: newBase(imp.Path)}
-		var v adt.Expr
-		if b.Const != "" {
-			v = mustParseConstBuiltin(ctx, b.Name, b.Const)
-		} else {
-			v = toBuiltin(ctx, b)
+var (
+	funcPath  = cue.MakePath(cue.Str("func"))
+	valuePath = cue.MakePath(cue.Str("value"))
+)
+
+func ensureStruct(opCtx *adt.OpContext, v *adt.Vertex) {
+	v.Finalize(opCtx)
+	v = v.Default()
+	if v, ok := v.BaseValue.(*adt.Bottom); ok {
+		panic(fmt.Errorf("got bottom: %v", v.Err))
+	}
+	if k := v.Kind(); k != adt.StructKind {
+		pretty.Println(v)
+		panic(fmt.Errorf("unexpected kind for export data; got %v want %v", k, adt.StructKind))
+	}
+}
+
+func (p *Package) MustCompile(opCtx *adt.OpContext, importPath string) *adt.Vertex {
+	log.Printf("opCtx.Runtime: %T", opCtx.Runtime)
+
+	//ctx := (*cue.Context)(opCtx.Runtime.(*runtime.Runtime))
+	//pkgLabel := ctx.StringLabel(importPath)
+	//st := &adt.StructLit{}
+	//if len(p.Native) > 0 {
+	//	obj.AddConjunct(adt.MakeRootConjunct(nil, st))
+	//}
+
+	f, err := parser.ParseFile(importPath, p.CUE)
+	if err != nil {
+		panic(fmt.Errorf("could not parse %v: %v", p.CUE, err))
+	}
+
+	v, err := compile.Files(nil, opCtx, importPath, f)
+	if err != nil {
+		panic(fmt.Errorf("could compile parse %v: %v", p.CUE, err))
+	}
+	ensureStruct(opCtx, v)
+	//pkgLabel := opCtx.StringLabel(importPath)
+	//st := &adt.StructLit{}
+	funcsLabel := opCtx.StringLabel("funcs")
+	log.Printf("%d arcs; %d conjuncts; %d structs", len(v.Arcs), len(v.Conjuncts), len(v.Structs))
+	log.Printf("conjunct decls %#v", v.Conjuncts[0].Field().(*adt.StructLit).Decls)
+	var funcsArc *adt.Vertex
+	for _, a := range v.Arcs {
+		a.Finalize(opCtx)
+		log.Printf("feature: (%v): %v; %d conjuncts; %d arcs; base %T", a.Label == funcsLabel, a.Label.IdentString(opCtx), len(a.Conjuncts), len(a.Arcs), a.BaseValue)
+		if a.Label == funcsLabel {
+			funcsArc = a
 		}
-		st.Decls = append(st.Decls, &adt.Field{
-			Label: f,
-			Value: v,
-		})
 	}
-
-	// Parse builtin CUE
-	if p.CUE != "" {
-		expr, err := parser.ParseExpr(importPath, p.CUE)
-		if err != nil {
-			panic(fmt.Errorf("could not parse %v: %v", p.CUE, err))
+	if funcsArc != nil {
+		ensureStruct(opCtx, funcsArc)
+		log.Printf("printing funcsArc (%d members)", len(funcsArc.Arcs))
+		for _, a := range funcsArc.Arcs {
+			log.Printf("func: %v", a.Label.IdentString(opCtx))
 		}
-		c, err := compile.Expr(nil, ctx.Runtime, importPath, expr)
-		if err != nil {
-			panic(fmt.Errorf("could compile parse %v: %v", p.CUE, err))
-		}
-		obj.AddConjunct(c)
 	}
 
-	// We could compile lazily, but this is easier for debugging.
-	obj.Finalize(ctx)
-	if err := obj.Err(ctx, adt.Finalized); err != nil {
-		panic(err.Err)
-	}
+	//obj := &adt.Vertex{}
+	//if len(p.Native) > 0 {
+	//	obj.AddConjunct(adt.MakeRootConjunct(nil, st))
+	//}
+	// TODO
+	//export.VertexFeatures(ctx, v)
 
-	return obj
+	//	v := ctx.BuildFile(f)
+	//	if err := v.Err(); err != nil {
+	//		panic(fmt.Errorf("cannot build %s: %v", importPath, err))
+	//	}
+	//	iter, err := v.Fields()
+	//	if err != nil {
+	//		panic(err)
+	//	}
+	//	for iter.Next() {
+	//		fieldVal := iter.Value()
+	//		if v := fieldVal.LookupPath(funcPath); v.Err() == nil {
+	//			log.Printf("make builtin %v", iter.Selector())
+	//		} else if v := fieldVal.LookupPath(valuePath); v.Err() == nil {
+	//			log.Printf("make value %v", iter.Selector())
+	//		} else {
+	//			panic(fmt.Errorf("unrecognized builtin kind %v", iter.Selector()))
+	//		}
+	//	}
+
+	//	obj.AddConjunct(c)
+	//	for _, b := range p.Native {
+	//		b.Pkg = pkgLabel
+	//
+	//		f := ctx.StringLabel(b.Name) // never starts with _
+	//		// n := &node{baseValue: newBase(imp.Path)}
+	//		var v adt.Expr = toBuiltin(ctx, b)
+	//		if b.Const != "" {
+	//			v = mustParseConstBuiltin(ctx, b.Name, b.Const)
+	//		}
+	//		st.Decls = append(st.Decls, &adt.Field{
+	//			Label: f,
+	//			Value: v,
+	//		})
+	//	}
+	//
+	//	// Parse builtin CUE
+	//	if p.CUE != "" {
+	//	}
+	//
+	//	// We could compile lazily, but this is easier for debugging.
+	//	obj.Finalize(ctx)
+	//	if err := obj.Err(ctx, adt.Finalized); err != nil {
+	//		panic(err.Err)
+	//	}
+
+	return nil
 }
 
 func toBuiltin(ctx *adt.OpContext, b *Builtin) *adt.Builtin {

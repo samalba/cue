@@ -5,54 +5,33 @@ package structs
 import (
 	"cuelang.org/go/internal/core/adt"
 	"cuelang.org/go/pkg/internal"
+
+	_ "embed"
 )
 
 func init() {
 	internal.Register("struct", pkg)
 }
 
+//go:embed pkg.cue
+var cueDecls string
+
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
 	Funcs: map[string]func(c *internal.CallCtxt){
 		"MinFields": func(c *internal.CallCtxt) {
-
 			object, n := c.Struct(0), c.Int(1)
 			if c.Do() {
 				c.Ret = MinFields(object, n)
 			}
 		},
 		"MaxFields": func(c *internal.CallCtxt) {
-
 			object, n := c.Struct(0), c.Int(1)
 			if c.Do() {
 				c.Ret, c.Err = MaxFields(object, n)
 			}
 		},
 	},
-	CUE: `{
-	_
-	exports: {
-		MinFields: {
-			in: [...#Arg] & [{
-				name: "object"
-				type: {}
-			}, {
-				name: "n"
-				type: >=-9223372036854775808 & <=9223372036854775807 & int
-			}]
-			out: _
-		}
-		MaxFields: {
-			in: [...#Arg] & [{
-				name: "object"
-				type: {}
-			}, {
-				name: "n"
-				type: >=-9223372036854775808 & <=9223372036854775807 & int
-			}]
-			out: bool
-		}
-	}
-}`,
+	CUE: cueDecls,
 }

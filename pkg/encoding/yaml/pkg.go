@@ -5,110 +5,57 @@ package yaml
 import (
 	"cuelang.org/go/internal/core/adt"
 	"cuelang.org/go/pkg/internal"
+
+	_ "embed"
 )
 
 func init() {
 	internal.Register("encoding/yaml", pkg)
 }
 
+//go:embed pkg.cue
+var cueDecls string
+
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
 	Funcs: map[string]func(c *internal.CallCtxt){
 		"Marshal": func(c *internal.CallCtxt) {
-
 			v := c.Value(0)
 			if c.Do() {
 				c.Ret, c.Err = Marshal(v)
 			}
 		},
 		"MarshalStream": func(c *internal.CallCtxt) {
-
 			v := c.Value(0)
 			if c.Do() {
 				c.Ret, c.Err = MarshalStream(v)
 			}
 		},
 		"Unmarshal": func(c *internal.CallCtxt) {
-
 			data := c.Bytes(0)
 			if c.Do() {
 				c.Ret, c.Err = Unmarshal(data)
 			}
 		},
 		"UnmarshalStream": func(c *internal.CallCtxt) {
-
 			data := c.Bytes(0)
 			if c.Do() {
 				c.Ret, c.Err = UnmarshalStream(data)
 			}
 		},
 		"Validate": func(c *internal.CallCtxt) {
-
 			b, v := c.Bytes(0), c.Value(1)
 			if c.Do() {
 				c.Ret, c.Err = Validate(b, v)
 			}
 		},
 		"ValidatePartial": func(c *internal.CallCtxt) {
-
 			b, v := c.Bytes(0), c.Value(1)
 			if c.Do() {
 				c.Ret, c.Err = ValidatePartial(b, v)
 			}
 		},
 	},
-	CUE: `{
-	_
-	exports: {
-		ValidatePartial: {
-			in: [...#Arg] & [{
-				name: "b"
-				type: bytes | string
-			}, {
-				name: "v"
-				type: _
-			}]
-			out: bool
-		}
-		Validate: {
-			in: [...#Arg] & [{
-				name: "b"
-				type: bytes | string
-			}, {
-				name: "v"
-				type: _
-			}]
-			out: bool
-		}
-		UnmarshalStream: {
-			in: [...#Arg] & [{
-				name: "data"
-				type: bytes | string
-			}]
-			out: _
-		}
-		Unmarshal: {
-			in: [...#Arg] & [{
-				name: "data"
-				type: bytes | string
-			}]
-			out: _
-		}
-		MarshalStream: {
-			in: [...#Arg] & [{
-				name: "v"
-				type: _
-			}]
-			out: string
-		}
-		Marshal: {
-			in: [...#Arg] & [{
-				name: "v"
-				type: _
-			}]
-			out: string
-		}
-	}
-}`,
+	CUE: cueDecls,
 }

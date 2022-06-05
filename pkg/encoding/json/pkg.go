@@ -5,155 +5,75 @@ package json
 import (
 	"cuelang.org/go/internal/core/adt"
 	"cuelang.org/go/pkg/internal"
+
+	_ "embed"
 )
 
 func init() {
 	internal.Register("encoding/json", pkg)
 }
 
+//go:embed pkg.cue
+var cueDecls string
+
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
 	Funcs: map[string]func(c *internal.CallCtxt){
 		"Valid": func(c *internal.CallCtxt) {
-
 			data := c.Bytes(0)
 			if c.Do() {
 				c.Ret = Valid(data)
 			}
 		},
 		"Compact": func(c *internal.CallCtxt) {
-
 			src := c.Bytes(0)
 			if c.Do() {
 				c.Ret, c.Err = Compact(src)
 			}
 		},
 		"Indent": func(c *internal.CallCtxt) {
-
 			src, prefix, indent := c.Bytes(0), c.String(1), c.String(2)
 			if c.Do() {
 				c.Ret, c.Err = Indent(src, prefix, indent)
 			}
 		},
 		"HTMLEscape": func(c *internal.CallCtxt) {
-
 			src := c.Bytes(0)
 			if c.Do() {
 				c.Ret = HTMLEscape(src)
 			}
 		},
 		"Marshal": func(c *internal.CallCtxt) {
-
 			v := c.Value(0)
 			if c.Do() {
 				c.Ret, c.Err = Marshal(v)
 			}
 		},
 		"MarshalStream": func(c *internal.CallCtxt) {
-
 			v := c.Value(0)
 			if c.Do() {
 				c.Ret, c.Err = MarshalStream(v)
 			}
 		},
 		"UnmarshalStream": func(c *internal.CallCtxt) {
-
 			data := c.Bytes(0)
 			if c.Do() {
 				c.Ret, c.Err = UnmarshalStream(data)
 			}
 		},
 		"Unmarshal": func(c *internal.CallCtxt) {
-
 			b := c.Bytes(0)
 			if c.Do() {
 				c.Ret, c.Err = Unmarshal(b)
 			}
 		},
 		"Validate": func(c *internal.CallCtxt) {
-
 			b, v := c.Bytes(0), c.Value(1)
 			if c.Do() {
 				c.Ret, c.Err = Validate(b, v)
 			}
 		},
 	},
-	CUE: `{
-	_
-	exports: {
-		Validate: {
-			in: [...#Arg] & [{
-				name: "b"
-				type: bytes | string
-			}, {
-				name: "v"
-				type: _
-			}]
-			out: bool
-		}
-		UnmarshalStream: {
-			in: [...#Arg] & [{
-				name: "data"
-				type: bytes | string
-			}]
-			out: _
-		}
-		Unmarshal: {
-			in: [...#Arg] & [{
-				name: "b"
-				type: bytes | string
-			}]
-			out: _
-		}
-		MarshalStream: {
-			in: [...#Arg] & [{
-				name: "v"
-				type: _
-			}]
-			out: string
-		}
-		Marshal: {
-			in: [...#Arg] & [{
-				name: "v"
-				type: _
-			}]
-			out: string
-		}
-		Indent: {
-			in: [...#Arg] & [{
-				name: "src"
-				type: bytes | string
-			}, {
-				name: "prefix"
-				type: string
-			}, {
-				name: "indent"
-				type: string
-			}]
-			out: string
-		}
-		HTMLEscape: {
-			in: [...#Arg] & [{
-				name: "src"
-				type: bytes | string
-			}]
-			out: string
-		}
-		Compact: {
-			in: [...#Arg] & [{
-				name: "src"
-				type: bytes | string
-			}]
-			out: string
-		}
-		Valid: {
-			in: [...#Arg] & [{
-				name: "data"
-				type: bytes | string
-			}]
-			out: bool
-		}
-	}
-}`,
+	CUE: cueDecls,
 }

@@ -5,48 +5,33 @@ package html
 import (
 	"cuelang.org/go/internal/core/adt"
 	"cuelang.org/go/pkg/internal"
+
+	_ "embed"
 )
 
 func init() {
 	internal.Register("html", pkg)
 }
 
+//go:embed pkg.cue
+var cueDecls string
+
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
 	Funcs: map[string]func(c *internal.CallCtxt){
 		"Escape": func(c *internal.CallCtxt) {
-
 			s := c.String(0)
 			if c.Do() {
 				c.Ret = Escape(s)
 			}
 		},
 		"Unescape": func(c *internal.CallCtxt) {
-
 			s := c.String(0)
 			if c.Do() {
 				c.Ret = Unescape(s)
 			}
 		},
 	},
-	CUE: `{
-	_
-	exports: {
-		Unescape: {
-			in: [...#Arg] & [{
-				name: "s"
-				type: string
-			}]
-			out: string
-		}
-		Escape: {
-			in: [...#Arg] & [{
-				name: "s"
-				type: string
-			}]
-			out: string
-		}
-	}
-}`,
+	CUE: cueDecls,
 }

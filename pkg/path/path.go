@@ -74,13 +74,13 @@ func (b *lazybuf) string() string {
 // It applies the following rules
 // iteratively until no further processing can be done:
 //
-//	1. Replace multiple Separator elements with a single one.
-//	2. Eliminate each . path name element (the current directory).
-//	3. Eliminate each inner .. path name element (the parent directory)
-//	   along with the non-.. element that precedes it.
-//	4. Eliminate .. elements that begin a rooted path:
-//	   that is, replace "/.." by "/" at the beginning of a path,
-//	   assuming Separator is '/'.
+//  1. Replace multiple Separator elements with a single one.
+//  2. Eliminate each . path name element (the current directory).
+//  3. Eliminate each inner .. path name element (the parent directory)
+//     along with the non-.. element that precedes it.
+//  4. Eliminate .. elements that begin a rooted path:
+//     that is, replace "/.." by "/" at the beginning of a path,
+//     assuming Separator is '/'.
 //
 // The returned path ends in a slash only if it represents a root directory,
 // such as "/" on Unix or `C:\` on Windows.
@@ -90,10 +90,22 @@ func (b *lazybuf) string() string {
 // If the result of this process is an empty string, Clean
 // returns the string ".".
 //
-// See also Rob Pike, ``Lexical File Names in Plan 9 or
-// Getting Dot-Dot Right,''
+// See also Rob Pike, “Lexical File Names in Plan 9 or
+// Getting Dot-Dot Right,”
 // https://9p.io/sys/doc/lexnames.html
-func Clean(path string, os OS) string {
+//
+//cue:func {
+//	in: [{
+//		name: "path"
+//		type: string
+//	}, {
+//		name: "os"
+//		type: OS
+//	}]
+//	out: string
+//
+// }
+func Clean(path string, os string) string {
 	return clean(path, getOS(os))
 }
 
@@ -174,7 +186,19 @@ func clean(path string, os os) string {
 // ToSlash returns the result of replacing each separator character
 // in path with a slash ('/') character. Multiple separators are
 // replaced by multiple slashes.
-func ToSlash(path string, os OS) string {
+//
+//cue:func {
+//	in: [{
+//		name: "path"
+//		type: string
+//	}, {
+//		name: "os"
+//		type: OS
+//	}]
+//	out: string
+//
+// }
+func ToSlash(path string, os string) string {
 	return toSlash(path, getOS(os))
 }
 
@@ -188,7 +212,19 @@ func toSlash(path string, os os) string {
 // FromSlash returns the result of replacing each slash ('/') character
 // in path with a separator character. Multiple slashes are replaced
 // by multiple separators.
-func FromSlash(path string, os OS) string {
+//
+//cue:func {
+//	in: [{
+//		name: "path"
+//		type: string
+//	}, {
+//		name: "os"
+//		type: OS
+//	}]
+//	out: string
+//
+// }
+func FromSlash(path string, os string) string {
 	return fromSlash(path, getOS(os))
 }
 
@@ -203,7 +239,18 @@ func fromSlash(path string, os os) string {
 // usually found in PATH or GOPATH environment variables.
 // Unlike strings.Split, SplitList returns an empty slice when passed an empty
 // string.
-func SplitList(path string, os OS) []string {
+//
+//cue:func {
+//	in: [{
+//		name: "path"
+//		type: string
+//	}, {
+//		name: "os"
+//		type: OS
+//	}]
+//	out: [...string]
+// }
+func SplitList(path string, os string) []string {
 	return getOS(os).splitList(path)
 }
 
@@ -212,7 +259,18 @@ func SplitList(path string, os OS) []string {
 // If there is no slash in path, Split returns an empty dir and file set to
 // path. The returned values have the property that path = dir+file.
 // The default value for os is Unix.
-func Split(path string, os OS) []string {
+//
+//cue:func {
+//	in: [{
+//		name: "path"
+//		type: string
+//	}, {
+//		name: "os"
+//		type: OS
+//	}]
+//	out: [...string]
+// }
+func Split(path string, os string) []string {
 	x := getOS(os)
 	vol := volumeName(path, x)
 	i := len(path) - 1
@@ -230,7 +288,19 @@ func Split(path string, os OS) []string {
 // On Windows, the result will only be a UNC path if the first
 // non-empty element is a UNC path.
 // The default value for os is Unix.
-func Join(elem []string, os OS) string {
+//
+//cue:func {
+//	in: [{
+//		name: "elem"
+//		type: [...string]
+//	}, {
+//		name: "os"
+//		type: OS
+//	}]
+//	out: string
+//
+// }
+func Join(elem []string, os string) string {
 	return getOS(os).join(elem)
 }
 
@@ -238,7 +308,19 @@ func Join(elem []string, os OS) string {
 // The extension is the suffix beginning at the final dot
 // in the final element of path; it is empty if there is
 // no dot. The default value for os is Unix.
-func Ext(path string, os OS) string {
+//
+//cue:func {
+//	in: [{
+//		name: "path"
+//		type: string
+//	}, {
+//		name: "os"
+//		type: OS
+//	}]
+//	out: string
+//
+// }
+func Ext(path string, os string) string {
 	x := getOS(os)
 	for i := len(path) - 1; i >= 0 && !x.IsPathSeparator(path[i]); i-- {
 		if path[i] == '.' {
@@ -251,7 +333,22 @@ func Ext(path string, os OS) string {
 // Resolve reports the path of sub relative to dir. If sub is an absolute path,
 // or if dir is empty, it will return sub. If sub is empty, it will return dir.
 // Resolve calls Clean on the result. The default value for os is Unix.
-func Resolve(dir, sub string, os OS) string {
+//
+//cue:func {
+//	in: [{
+//		name: "dir"
+//		type: string
+//	}, {
+//		name: "sub"
+//		type: string
+//	}, {
+//		name: "os"
+//		type: OS
+//	}]
+//	out: string
+//
+// }
+func Resolve(dir, sub string, os string) string {
 	x := getOS(os)
 	if x.IsAbs(sub) {
 		return clean(sub, x)
@@ -268,7 +365,22 @@ func Resolve(dir, sub string, os OS) string {
 // An error is returned if targpath can't be made relative to basepath or if
 // knowing the current working directory would be necessary to compute it.
 // Rel calls Clean on the result. The default value for os is Unix.
-func Rel(basepath, targpath string, os OS) (string, error) {
+//
+//cue:func {
+//	in: [{
+//		name: "basepath"
+//		type: string
+//	}, {
+//		name: "targpath"
+//		type: string
+//	}, {
+//		name: "os"
+//		type: OS
+//	}]
+//	out: string
+//
+// }
+func Rel(basepath, targpath string, os string) (string, error) {
 	x := getOS(os)
 	baseVol := volumeName(basepath, x)
 	targVol := volumeName(targpath, x)
@@ -342,7 +454,19 @@ func Rel(basepath, targpath string, os OS) (string, error) {
 // If the path is empty, Base returns ".".
 // If the path consists entirely of separators, Base returns a single separator.
 // The default value for os is Unix.
-func Base(path string, os OS) string {
+//
+//cue:func {
+//	in: [{
+//		name: "path"
+//		type: string
+//	}, {
+//		name: "os"
+//		type: OS
+//	}]
+//	out: string
+//
+// }
+func Base(path string, os string) string {
 	x := getOS(os)
 	if path == "" {
 		return "."
@@ -375,7 +499,19 @@ func Base(path string, os OS) string {
 // If the path consists entirely of separators, Dir returns a single separator.
 // The returned path does not end in a separator unless it is the root directory.
 // The default value for os is Unix.
-func Dir(path string, os OS) string {
+//
+//cue:func {
+//	in: [{
+//		name: "path"
+//		type: string
+//	}, {
+//		name: "os"
+//		type: OS
+//	}]
+//	out: string
+//
+// }
+func Dir(path string, os string) string {
 	x := getOS(os)
 	vol := volumeName(path, x)
 	i := len(path) - 1
@@ -393,7 +529,19 @@ func Dir(path string, os OS) string {
 // IsAbs reports whether the path is absolute. The default value for os is Unix.
 // Note that because IsAbs has a default value, it cannot be used as
 // a validator.
-func IsAbs(path string, os OS) bool {
+//
+//cue:func {
+//	in: [{
+//		name: "path"
+//		type: string
+//	}, {
+//		name: "os"
+//		type: OS
+//	}]
+//	out: bool
+//
+// }
+func IsAbs(path string, os string) bool {
 	return getOS(os).IsAbs(path)
 }
 
@@ -402,7 +550,18 @@ func IsAbs(path string, os OS) bool {
 // Given "\\host\share\foo" it returns "\\host\share".
 // On other platforms it returns "".
 // The default value for os is Windows.
-func VolumeName(path string, os OS) string {
+//
+//cue:func {
+//	in: [{
+//		name: "path"
+//		type: string
+//	}, {
+//		name: "os"
+//		type: OS
+//	}]
+//	out: string
+// }
+func VolumeName(path string, os string) string {
 	return volumeName(path, getOS(os))
 }
 

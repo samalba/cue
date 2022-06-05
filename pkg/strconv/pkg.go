@@ -5,320 +5,135 @@ package strconv
 import (
 	"cuelang.org/go/internal/core/adt"
 	"cuelang.org/go/pkg/internal"
+
+	_ "embed"
 )
 
 func init() {
 	internal.Register("strconv", pkg)
 }
 
+//go:embed pkg.cue
+var cueDecls string
+
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
 	Funcs: map[string]func(c *internal.CallCtxt){
 		"Unquote": func(c *internal.CallCtxt) {
-
 			s := c.String(0)
 			if c.Do() {
 				c.Ret, c.Err = Unquote(s)
 			}
 		},
 		"ParseBool": func(c *internal.CallCtxt) {
-
 			str := c.String(0)
 			if c.Do() {
 				c.Ret, c.Err = ParseBool(str)
 			}
 		},
 		"FormatBool": func(c *internal.CallCtxt) {
-
 			b := c.Bool(0)
 			if c.Do() {
 				c.Ret = FormatBool(b)
 			}
 		},
 		"ParseComplex": func(c *internal.CallCtxt) {
-
 			s, bitSize := c.String(0), c.Int(1)
 			if c.Do() {
 				c.Ret, c.Err = ParseComplex(s, bitSize)
 			}
 		},
 		"ParseFloat": func(c *internal.CallCtxt) {
-
 			s, bitSize := c.String(0), c.Int(1)
 			if c.Do() {
 				c.Ret, c.Err = ParseFloat(s, bitSize)
 			}
 		},
 		"ParseUint": func(c *internal.CallCtxt) {
-
 			s, base, bitSize := c.String(0), c.Int(1), c.Int(2)
 			if c.Do() {
 				c.Ret, c.Err = ParseUint(s, base, bitSize)
 			}
 		},
 		"ParseInt": func(c *internal.CallCtxt) {
-
 			s, base, bitSize := c.String(0), c.Int(1), c.Int(2)
 			if c.Do() {
 				c.Ret, c.Err = ParseInt(s, base, bitSize)
 			}
 		},
 		"Atoi": func(c *internal.CallCtxt) {
-
 			s := c.String(0)
 			if c.Do() {
 				c.Ret, c.Err = Atoi(s)
 			}
 		},
 		"FormatFloat": func(c *internal.CallCtxt) {
-
 			f, fmt, prec, bitSize := c.Float64(0), c.Byte(1), c.Int(2), c.Int(3)
 			if c.Do() {
 				c.Ret = FormatFloat(f, fmt, prec, bitSize)
 			}
 		},
 		"FormatUint": func(c *internal.CallCtxt) {
-
-			i, base := c.Uint64(0), c.Int(1)
+			i, base := c.BigInt(0), c.Int(1)
 			if c.Do() {
 				c.Ret = FormatUint(i, base)
 			}
 		},
 		"FormatInt": func(c *internal.CallCtxt) {
-
-			i, base := c.Int64(0), c.Int(1)
+			i, base := c.BigInt(0), c.Int(1)
 			if c.Do() {
 				c.Ret = FormatInt(i, base)
 			}
 		},
 		"Quote": func(c *internal.CallCtxt) {
-
 			s := c.String(0)
 			if c.Do() {
 				c.Ret = Quote(s)
 			}
 		},
 		"QuoteToASCII": func(c *internal.CallCtxt) {
-
 			s := c.String(0)
 			if c.Do() {
 				c.Ret = QuoteToASCII(s)
 			}
 		},
 		"QuoteToGraphic": func(c *internal.CallCtxt) {
-
 			s := c.String(0)
 			if c.Do() {
 				c.Ret = QuoteToGraphic(s)
 			}
 		},
 		"QuoteRune": func(c *internal.CallCtxt) {
-
 			r := c.Rune(0)
 			if c.Do() {
 				c.Ret = QuoteRune(r)
 			}
 		},
 		"QuoteRuneToASCII": func(c *internal.CallCtxt) {
-
 			r := c.Rune(0)
 			if c.Do() {
 				c.Ret = QuoteRuneToASCII(r)
 			}
 		},
 		"QuoteRuneToGraphic": func(c *internal.CallCtxt) {
-
 			r := c.Rune(0)
 			if c.Do() {
 				c.Ret = QuoteRuneToGraphic(r)
 			}
 		},
 		"IsPrint": func(c *internal.CallCtxt) {
-
 			r := c.Rune(0)
 			if c.Do() {
 				c.Ret = IsPrint(r)
 			}
 		},
 		"IsGraphic": func(c *internal.CallCtxt) {
-
 			r := c.Rune(0)
 			if c.Do() {
 				c.Ret = IsGraphic(r)
 			}
 		},
 	},
-	CUE: `{
-	_
-	exports: {
-		Unquote: {
-			in: [...#Arg] & [{
-				name: "s"
-				type: string
-			}]
-			out: string
-		}
-		QuoteToGraphic: {
-			in: [...#Arg] & [{
-				name: "s"
-				type: string
-			}]
-			out: string
-		}
-		QuoteToASCII: {
-			in: [...#Arg] & [{
-				name: "s"
-				type: string
-			}]
-			out: string
-		}
-		QuoteRuneToGraphic: {
-			in: [...#Arg] & [{
-				name: "r"
-				type: >=-2147483648 & <=2147483647 & int
-			}]
-			out: string
-		}
-		QuoteRuneToASCII: {
-			in: [...#Arg] & [{
-				name: "r"
-				type: >=-2147483648 & <=2147483647 & int
-			}]
-			out: string
-		}
-		QuoteRune: {
-			in: [...#Arg] & [{
-				name: "r"
-				type: >=-2147483648 & <=2147483647 & int
-			}]
-			out: string
-		}
-		Quote: {
-			in: [...#Arg] & [{
-				name: "s"
-				type: string
-			}]
-			out: string
-		}
-		ParseUint: {
-			in: [...#Arg] & [{
-				name: "s"
-				type: string
-			}, {
-				name: "base"
-				type: >=-9223372036854775808 & <=9223372036854775807 & int
-			}, {
-				name: "bitSize"
-				type: >=-9223372036854775808 & <=9223372036854775807 & int
-			}]
-			out: >=0 & <=18446744073709551615 & int
-		}
-		ParseInt: {
-			in: [...#Arg] & [{
-				name: "s"
-				type: string
-			}, {
-				name: "base"
-				type: >=-9223372036854775808 & <=9223372036854775807 & int
-			}, {
-				name: "bitSize"
-				type: >=-9223372036854775808 & <=9223372036854775807 & int
-			}]
-			out: >=-9223372036854775808 & <=9223372036854775807 & int
-		}
-		ParseFloat: {
-			in: [...#Arg] & [{
-				name: "s"
-				type: string
-			}, {
-				name: "bitSize"
-				type: >=-9223372036854775808 & <=9223372036854775807 & int
-			}]
-			out: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
-		}
-		ParseComplex: {
-			in: [...#Arg] & [{
-				name: "s"
-				type: string
-			}, {
-				name: "bitSize"
-				type: >=-9223372036854775808 & <=9223372036854775807 & int
-			}]
-			out: _
-		}
-		ParseBool: {
-			in: [...#Arg] & [{
-				name: "str"
-				type: string
-			}]
-			out: bool
-		}
-		IsPrint: {
-			in: [...#Arg] & [{
-				name: "r"
-				type: >=-2147483648 & <=2147483647 & int
-			}]
-			out: bool
-		}
-		IsGraphic: {
-			in: [...#Arg] & [{
-				name: "r"
-				type: >=-2147483648 & <=2147483647 & int
-			}]
-			out: bool
-		}
-		IntSize?: 64
-		FormatUint: {
-			in: [...#Arg] & [{
-				name: "i"
-				type: >=0 & <=18446744073709551615 & int
-			}, {
-				name: "base"
-				type: >=-9223372036854775808 & <=9223372036854775807 & int
-			}]
-			out: string
-		}
-		FormatInt: {
-			in: [...#Arg] & [{
-				name: "i"
-				type: >=-9223372036854775808 & <=9223372036854775807 & int
-			}, {
-				name: "base"
-				type: >=-9223372036854775808 & <=9223372036854775807 & int
-			}]
-			out: string
-		}
-		FormatFloat: {
-			in: [...#Arg] & [{
-				name: "f"
-				type: >=-1.797693134862315708145274237317043567981e+308 & <=1.797693134862315708145274237317043567981e+308
-			}, {
-				name: "fmt"
-				type: >=0 & <=255 & int
-			}, {
-				name: "prec"
-				type: >=-9223372036854775808 & <=9223372036854775807 & int
-			}, {
-				name: "bitSize"
-				type: >=-9223372036854775808 & <=9223372036854775807 & int
-			}]
-			out: string
-		}
-		FormatBool: {
-			in: [...#Arg] & [{
-				name: "b"
-				type: bool
-			}]
-			out: string
-		}
-		Atoi: {
-			in: [...#Arg] & [{
-				name: "s"
-				type: string
-			}]
-			out: >=-9223372036854775808 & <=9223372036854775807 & int
-		}
-	}
-}`,
+	CUE: cueDecls,
 }

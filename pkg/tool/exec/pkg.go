@@ -5,29 +5,20 @@ package exec
 import (
 	"cuelang.org/go/internal/core/adt"
 	"cuelang.org/go/pkg/internal"
+
+	_ "embed"
 )
 
 func init() {
 	internal.Register("tool/exec", pkg)
 }
 
+//go:embed pkg.cue
+var cueDecls string
+
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
 	Funcs: map[string]func(c *internal.CallCtxt){},
-	CUE: `{
-	Run: {
-		$id:  *"tool/exec.Run" | "exec"
-		cmd:  string | [string, ...string]
-		dir?: string
-		env: {
-			[string]: string | [...=~"="]
-		}
-		stdout:  *null | string | bytes
-		stderr:  *null | string | bytes
-		stdin:   *null | string | bytes
-		success: bool
-	}
-	exports: {}
-}`,
+	CUE:   cueDecls,
 }

@@ -5,196 +5,75 @@ package time
 import (
 	"cuelang.org/go/internal/core/adt"
 	"cuelang.org/go/pkg/internal"
+
+	_ "embed"
 )
 
 func init() {
 	internal.Register("time", pkg)
 }
 
+//go:embed pkg.cue
+var cueDecls string
+
 var _ = adt.TopKind // in case the adt package isn't used
 
 var pkg = &internal.Package{
 	Funcs: map[string]func(c *internal.CallCtxt){
 		"Duration": func(c *internal.CallCtxt) {
-
 			s := c.String(0)
 			if c.Do() {
 				c.Ret, c.Err = Duration(s)
 			}
 		},
 		"FormatDuration": func(c *internal.CallCtxt) {
-
 			d := c.Int64(0)
 			if c.Do() {
 				c.Ret = FormatDuration(d)
 			}
 		},
 		"ParseDuration": func(c *internal.CallCtxt) {
-
 			s := c.String(0)
 			if c.Do() {
 				c.Ret, c.Err = ParseDuration(s)
 			}
 		},
 		"Time": func(c *internal.CallCtxt) {
-
 			s := c.String(0)
 			if c.Do() {
 				c.Ret, c.Err = Time(s)
 			}
 		},
 		"Format": func(c *internal.CallCtxt) {
-
 			value, layout := c.String(0), c.String(1)
 			if c.Do() {
 				c.Ret, c.Err = Format(value, layout)
 			}
 		},
 		"FormatString": func(c *internal.CallCtxt) {
-
 			layout, value := c.String(0), c.String(1)
 			if c.Do() {
 				c.Ret, c.Err = FormatString(layout, value)
 			}
 		},
 		"Parse": func(c *internal.CallCtxt) {
-
 			layout, value := c.String(0), c.String(1)
 			if c.Do() {
 				c.Ret, c.Err = Parse(layout, value)
 			}
 		},
 		"Unix": func(c *internal.CallCtxt) {
-
 			sec, nsec := c.Int64(0), c.Int64(1)
 			if c.Do() {
 				c.Ret = Unix(sec, nsec)
 			}
 		},
 		"Split": func(c *internal.CallCtxt) {
-
 			t := c.String(0)
 			if c.Do() {
 				c.Ret, c.Err = Split(t)
 			}
 		},
 	},
-	CUE: `{
-	_
-	exports: {
-		Wednesday?: 3
-		UnixDate?:  "Mon Jan _2 15:04:05 MST 2006"
-		Unix: {
-			in: [...#Arg] & [{
-				name: "sec"
-				type: >=-9223372036854775808 & <=9223372036854775807 & int
-			}, {
-				name: "nsec"
-				type: >=-9223372036854775808 & <=9223372036854775807 & int
-			}]
-			out: string
-		}
-		Tuesday?: 2
-		Time: {
-			in: [...#Arg] & [{
-				name: "s"
-				type: string
-			}]
-			out: bool
-		}
-		Thursday?: 4
-		Sunday?:   0
-		Split: {
-			in: [...#Arg] & [{
-				name: "t"
-				type: string
-			}]
-			out: _
-		}
-		September?:   9
-		Second?:      1000000000
-		Saturday?:    6
-		RubyDate?:    "Mon Jan 02 15:04:05 -0700 2006"
-		RFC850?:      "Monday, 02-Jan-06 15:04:05 MST"
-		RFC822Z?:     "02 Jan 06 15:04 -0700"
-		RFC822?:      "02 Jan 06 15:04 MST"
-		RFC3339Nano?: "2006-01-02T15:04:05.999999999Z07:00"
-		RFC3339Date?: "2006-01-02"
-		RFC3339?:     "2006-01-02T15:04:05Z07:00"
-		RFC1123Z?:    "Mon, 02 Jan 2006 15:04:05 -0700"
-		RFC1123?:     "Mon, 02 Jan 2006 15:04:05 MST"
-		ParseDuration: {
-			in: [...#Arg] & [{
-				name: "s"
-				type: string
-			}]
-			out: >=-9223372036854775808 & <=9223372036854775807 & int
-		}
-		October?:     10
-		November?:    11
-		Nanosecond?:  1
-		Monday?:      1
-		Minute?:      60000000000
-		Millisecond?: 1000000
-		Microsecond?: 1000
-		May?:         5
-		March?:       3
-		Kitchen24?:   "15:04"
-		Kitchen?:     "3:04PM"
-		June?:        6
-		July?:        7
-		January?:     1
-		Hour?:        3600000000000
-		Friday?:      5
-		FormatString: {
-			in: [...#Arg] & [{
-				name: "layout"
-				type: string
-			}, {
-				name: "value"
-				type: string
-			}]
-			out: string
-		}
-		FormatDuration: {
-			in: [...#Arg] & [{
-				name: "d"
-				type: >=-9223372036854775808 & <=9223372036854775807 & int
-			}]
-			out: string
-		}
-		Format: {
-			in: [...#Arg] & [{
-				name: "value"
-				type: string
-			}, {
-				name: "layout"
-				type: string
-			}]
-			out: bool
-		}
-		February?: 2
-		Duration: {
-			in: [...#Arg] & [{
-				name: "s"
-				type: string
-			}]
-			out: bool
-		}
-		December?: 12
-		August?:   8
-		April?:    4
-		ANSIC?:    "Mon Jan _2 15:04:05 2006"
-		Parse: {
-			in: [...#Arg] & [{
-				name: "layout"
-				type: string
-			}, {
-				name: "value"
-				type: string
-			}]
-			out: string
-		}
-	}
-}`,
+	CUE: cueDecls,
 }
