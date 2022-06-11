@@ -4,131 +4,77 @@ package net
 #IPAddr: string | bytes | #Octets
 #Octets: [int & >=0 & <=255, int & >=0 & <=255, int & >=0 & <=255, int & >=0 & <=255] | [int & >=0 & <=255, int & >=0 & <=255, int & >=0 & <=255, int & >=0 & <=255, int & >=0 & <=255, int & >=0 & <=255, int & >=0 & <=255, int & >=0 & <=255, int & >=0 & <=255, int & >=0 & <=255, int & >=0 & <=255, int & >=0 & <=255, int & >=0 & <=255, int & >=0 & <=255, int & >=0 & <=255, int & >=0 & <=255]
 funcs: SplitHostPort: {
-	in: [{
-		name: "s"
-		type: string
-	}]
+	in: #A0: string
 	out: [... string]
 }
 funcs: JoinHostPort: {
-	in: [{
-		name: "host"
-		type: _
-	}, {
-		name: "port"
-		type: _
-	}]
+	in: {
+		#A0: _
+		#A1: _
+	}
 	out: string
 }
 funcs: FQDN: {
-	in: [{
-		name: "s"
-		type: string
-	}]
+	in: #A0: string
 	out: bool
 }
 IPv4len: 4
 IPv6len: 16
 funcs: ParseIP: {
-	in: [{
-		name: "s"
-		type: string
-	}]
+	in: #A0: string
 	out: [...]
 }
 funcs: IPv4: {
-	in: [{
-		name: "ip"
-		type: _
-	}]
+	in: #A0: _
 	out: bool
 }
 funcs: IP: {
-	in: [{
-		name: "ip"
-		type: _
-	}]
+	in: #A0: _
 	out: bool
 }
 funcs: IPCIDR: {
-	in: [{
-		name: "ip"
-		type: _
-	}]
+	in: #A0: _
 	out: bool
 }
 funcs: LoopbackIP: {
-	in: [{
-		name: "ip"
-		type: _
-	}]
+	in: #A0: _
 	out: bool
 }
 funcs: MulticastIP: {
-	in: [{
-		name: "ip"
-		type: _
-	}]
+	in: #A0: _
 	out: bool
 }
 funcs: InterfaceLocalMulticastIP: {
-	in: [{
-		name: "ip"
-		type: _
-	}]
+	in: #A0: _
 	out: bool
 }
 funcs: LinkLocalMulticastIP: {
-	in: [{
-		name: "ip"
-		type: _
-	}]
+	in: #A0: _
 	out: bool
 }
 funcs: LinkLocalUnicastIP: {
-	in: [{
-		name: "ip"
-		type: _
-	}]
+	in: #A0: _
 	out: bool
 }
 funcs: GlobalUnicastIP: {
-	in: [{
-		name: "ip"
-		type: _
-	}]
+	in: #A0: _
 	out: bool
 }
 funcs: UnspecifiedIP: {
-	in: [{
-		name: "ip"
-		type: _
-	}]
+	in: #A0: _
 	out: bool
 }
 funcs: ToIP4: {
-	in: [{
-		name: "ip"
-		type: #IPAddr
-	}]
+	in: #A0: #IPAddr
 	out: #Octets
-	in: [{
-		name: "ip"
-		type: _
-	}]
+	in: #A0: _
 	out: [...]
 }
 funcs: ToIP16: {
-	in: [{
-		name: "ip"
-		type: _
-	}]
+	in: #A0: _
 	out: [...]
 }
 funcs: IPString: {
-	in: [{
-		name: "ip"
-		type: _
-	}]
+	in: #A0: _
 	out: string
 }

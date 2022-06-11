@@ -3,15 +3,10 @@ package ed25519
 
 PublicKeySize: 32
 funcs: Valid: {
-	in: [{
-		name: "publicKey"
-		type: bytes | string
-	}, {
-		name: "message"
-		type: bytes | string
-	}, {
-		name: "signature"
-		type: bytes | string
-	}]
+	in: {
+		#A0: bytes | string
+		#A1: bytes | string
+		#A2: bytes | string
+	}
 	out: bool
 }

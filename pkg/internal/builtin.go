@@ -75,18 +75,6 @@ var (
 	valuePath = cue.MakePath(cue.Str("value"))
 )
 
-func ensureStruct(opCtx *adt.OpContext, v *adt.Vertex) {
-	v.Finalize(opCtx)
-	v = v.Default()
-	if v, ok := v.BaseValue.(*adt.Bottom); ok {
-		panic(fmt.Errorf("got bottom: %v", v.Err))
-	}
-	if k := v.Kind(); k != adt.StructKind {
-		pretty.Println(v)
-		panic(fmt.Errorf("unexpected kind for export data; got %v want %v", k, adt.StructKind))
-	}
-}
-
 func (p *Package) MustCompile(opCtx *adt.OpContext, importPath string) *adt.Vertex {
 	log.Printf("opCtx.Runtime: %T", opCtx.Runtime)
 
@@ -181,6 +169,18 @@ func (p *Package) MustCompile(opCtx *adt.OpContext, importPath string) *adt.Vert
 	//	}
 
 	return nil
+}
+
+func ensureStruct(opCtx *adt.OpContext, v *adt.Vertex) {
+	v.Finalize(opCtx)
+	v = v.Default()
+	if v, ok := v.BaseValue.(*adt.Bottom); ok {
+		panic(fmt.Errorf("got bottom: %v", v.Err))
+	}
+	if k := v.Kind(); k != adt.StructKind {
+		pretty.Println(v)
+		panic(fmt.Errorf("unexpected kind for export data; got %v want %v", k, adt.StructKind))
+	}
 }
 
 func toBuiltin(ctx *adt.OpContext, b *Builtin) *adt.Builtin {

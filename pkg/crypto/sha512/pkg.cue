@@ -7,30 +7,18 @@ Size256:   32
 Size384:   48
 BlockSize: 128
 funcs: Sum512: {
-	in: [{
-		name: "data"
-		type: bytes | string
-	}]
+	in: #A0: bytes | string
 	out: bytes | string
 }
 funcs: Sum384: {
-	in: [{
-		name: "data"
-		type: bytes | string
-	}]
+	in: #A0: bytes | string
 	out: bytes | string
 }
 funcs: Sum512_224: {
-	in: [{
-		name: "data"
-		type: bytes | string
-	}]
+	in: #A0: bytes | string
 	out: bytes | string
 }
 funcs: Sum512_256: {
-	in: [{
-		name: "data"
-		type: bytes | string
-	}]
+	in: #A0: bytes | string
 	out: bytes | string
 }

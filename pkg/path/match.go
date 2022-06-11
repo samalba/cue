@@ -53,16 +53,11 @@ var ErrBadPattern = errors.New("syntax error in pattern")
 // path separator.
 //
 //cue:func {
-//	in: [{
-//		name: "pattern"
-//		type: string
-//	}, {
-//		name: "name"
-//		type: string
-//	}, {
-//		name: "os"
-//		type: OS
-//	}]
+//	in: {
+//		#A0: string
+//		#A1: string
+//		#A2: OS
+//	}
 //	out: bool
 //
 // }

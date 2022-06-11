@@ -2,9 +2,6 @@
 package tabwriter
 
 funcs: Write: {
-	in: [{
-		name: "data"
-		type: _
-	}]
+	in: #A0: _
 	out: string
 }

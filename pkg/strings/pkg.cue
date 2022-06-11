@@ -2,339 +2,225 @@
 package strings
 
 funcs: ByteAt: {
-	in: [{
-		name: "b"
-		type: bytes | string
-	}, {
-		name: "i"
-		type: int64
-	}]
+	in: {
+		#A0: bytes | string
+		#A1: int64
+	}
 	out: uint8
 }
 funcs: ByteSlice: {
-	in: [{
-		name: "b"
-		type: bytes | string
-	}, {
-		name: "start"
-		type: int64
-	}, {
-		name: "end"
-		type: int64
-	}]
+	in: {
+		#A0: bytes | string
+		#A1: int64
+		#A2: int64
+	}
 	out: bytes | string
 }
 funcs: Runes: {
-	in: [{
-		name: "s"
-		type: string
-	}]
+	in: #A0: string
 	out: [...]
 }
 funcs: MinRunes: {
-	in: [{
-		name: "s"
-		type: string
-	}, {
-		name: "min"
-		type: int64
-	}]
+	in: {
+		#A0: string
+		#A1: int64
+	}
 	out: bool
 }
 funcs: MaxRunes: {
-	in: [{
-		name: "s"
-		type: string
-	}, {
-		name: "max"
-		type: int64
-	}]
+	in: {
+		#A0: string
+		#A1: int64
+	}
 	out: bool
 }
 funcs: ToTitle: {
-	in: [{
-		name: "s"
-		type: string
-	}]
+	in: #A0: string
 	out: string
 }
 funcs: ToCamel: {
-	in: [{
-		name: "s"
-		type: string
-	}]
+	in: #A0: string
 	out: string
 }
 funcs: SliceRunes: {
-	in: [{
-		name: "s"
-		type: string
-	}, {
-		name: "start"
-		type: int64
-	}, {
-		name: "end"
-		type: int64
-	}]
+	in: {
+		#A0: string
+		#A1: int64
+		#A2: int64
+	}
 	out: string
 }
 funcs: Compare: {
-	in: [{
-		name: "a"
-		type: string
-	}, {
-		name: "b"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: int64
 }
 funcs: Count: {
-	in: [{
-		name: "s"
-		type: string
-	}, {
-		name: "substr"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: int64
 }
 funcs: Contains: {
-	in: [{
-		name: "s"
-		type: string
-	}, {
-		name: "substr"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: bool
 }
 funcs: ContainsAny: {
-	in: [{
-		name: "s"
-		type: string
-	}, {
-		name: "chars"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: bool
 }
 funcs: LastIndex: {
-	in: [{
-		name: "s"
-		type: string
-	}, {
-		name: "substr"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: int64
 }
 funcs: IndexAny: {
-	in: [{
-		name: "s"
-		type: string
-	}, {
-		name: "chars"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: int64
 }
 funcs: LastIndexAny: {
-	in: [{
-		name: "s"
-		type: string
-	}, {
-		name: "chars"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: int64
 }
 funcs: SplitN: {
-	in: [{
-		name: "s"
-		type: string
-	}, {
-		name: "sep"
-		type: string
-	}, {
-		name: "n"
-		type: int64
-	}]
+	in: {
+		#A0: string
+		#A1: string
+		#A2: int64
+	}
 	out: [... string]
 }
 funcs: SplitAfterN: {
-	in: [{
-		name: "s"
-		type: string
-	}, {
-		name: "sep"
-		type: string
-	}, {
-		name: "n"
-		type: int64
-	}]
+	in: {
+		#A0: string
+		#A1: string
+		#A2: int64
+	}
 	out: [... string]
 }
 funcs: Split: {
-	in: [{
-		name: "s"
-		type: string
-	}, {
-		name: "sep"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: [... string]
 }
 funcs: SplitAfter: {
-	in: [{
-		name: "s"
-		type: string
-	}, {
-		name: "sep"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: [... string]
 }
 funcs: Fields: {
-	in: [{
-		name: "s"
-		type: string
-	}]
+	in: #A0: string
 	out: [... string]
 }
 funcs: Join: {
-	in: [{
-		name: "elems"
-		type: [... string]
-	}, {
-		name: "sep"
-		type: string
-	}]
+	in: {
+		#A0: [... string]
+		#A1: string
+	}
 	out: string
 }
 funcs: HasPrefix: {
-	in: [{
-		name: "s"
-		type: string
-	}, {
-		name: "prefix"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: bool
 }
 funcs: HasSuffix: {
-	in: [{
-		name: "s"
-		type: string
-	}, {
-		name: "suffix"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: bool
 }
 funcs: Repeat: {
-	in: [{
-		name: "s"
-		type: string
-	}, {
-		name: "count"
-		type: int64
-	}]
+	in: {
+		#A0: string
+		#A1: int64
+	}
 	out: string
 }
 funcs: ToUpper: {
-	in: [{
-		name: "s"
-		type: string
-	}]
+	in: #A0: string
 	out: string
 }
 funcs: ToLower: {
-	in: [{
-		name: "s"
-		type: string
-	}]
+	in: #A0: string
 	out: string
 }
 funcs: Trim: {
-	in: [{
-		name: "s"
-		type: string
-	}, {
-		name: "cutset"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: string
 }
 funcs: TrimLeft: {
-	in: [{
-		name: "s"
-		type: string
-	}, {
-		name: "cutset"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: string
 }
 funcs: TrimRight: {
-	in: [{
-		name: "s"
-		type: string
-	}, {
-		name: "cutset"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: string
 }
 funcs: TrimSpace: {
-	in: [{
-		name: "s"
-		type: string
-	}]
+	in: #A0: string
 	out: string
 }
 funcs: TrimPrefix: {
-	in: [{
-		name: "s"
-		type: string
-	}, {
-		name: "prefix"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: string
 }
 funcs: TrimSuffix: {
-	in: [{
-		name: "s"
-		type: string
-	}, {
-		name: "suffix"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: string
 }
 funcs: Replace: {
-	in: [{
-		name: "s"
-		type: string
-	}, {
-		name: "old"
-		type: string
-	}, {
-		name: "new"
-		type: string
-	}, {
-		name: "n"
-		type: int64
-	}]
+	in: {
+		#A0: string
+		#A1: string
+		#A2: string
+		#A3: int64
+	}
 	out: string
 }
 funcs: Index: {
-	in: [{
-		name: "s"
-		type: string
-	}, {
-		name: "substr"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: int64
 }

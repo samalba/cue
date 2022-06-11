@@ -2,26 +2,17 @@
 package template
 
 funcs: Execute: {
-	in: [{
-		name: "templ"
-		type: string
-	}, {
-		name: "data"
-		type: _
-	}]
+	in: {
+		#A0: string
+		#A1: _
+	}
 	out: string
 }
 funcs: HTMLEscape: {
-	in: [{
-		name: "s"
-		type: string
-	}]
+	in: #A0: string
 	out: string
 }
 funcs: JSEscape: {
-	in: [{
-		name: "s"
-		type: string
-	}]
+	in: #A0: string
 	out: string
 }

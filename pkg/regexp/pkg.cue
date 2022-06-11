@@ -2,121 +2,78 @@
 package regexp
 
 funcs: Find: {
-	in: [{
-		name: "pattern"
-		type: string
-	}, {
-		name: "s"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: string
 }
 funcs: FindAll: {
-	in: [{
-		name: "pattern"
-		type: string
-	}, {
-		name: "s"
-		type: string
-	}, {
-		name: "n"
-		type: int64
-	}]
+	in: {
+		#A0: string
+		#A1: string
+		#A2: int64
+	}
 	out: [... string]
 }
 funcs: FindAllNamedSubmatch: {
-	in: [{
-		name: "pattern"
-		type: string
-	}, {
-		name: "s"
-		type: string
-	}, {
-		name: "n"
-		type: int64
-	}]
+	in: {
+		#A0: string
+		#A1: string
+		#A2: int64
+	}
 	out: [...]
 }
 funcs: FindAllSubmatch: {
-	in: [{
-		name: "pattern"
-		type: string
-	}, {
-		name: "s"
-		type: string
-	}, {
-		name: "n"
-		type: int64
-	}]
+	in: {
+		#A0: string
+		#A1: string
+		#A2: int64
+	}
 	out: [...]
 }
 funcs: FindNamedSubmatch: {
-	in: [{
-		name: "pattern"
-		type: string
-	}, {
-		name: "s"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: {...}
 }
 funcs: FindSubmatch: {
-	in: [{
-		name: "pattern"
-		type: string
-	}, {
-		name: "s"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: [... string]
 }
 funcs: ReplaceAll: {
-	in: [{
-		name: "pattern"
-		type: string
-	}, {
-		name: "src"
-		type: string
-	}, {
-		name: "repl"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+		#A2: string
+	}
 	out: string
 }
 funcs: ReplaceAllLiteral: {
-	in: [{
-		name: "pattern"
-		type: string
-	}, {
-		name: "src"
-		type: string
-	}, {
-		name: "repl"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+		#A2: string
+	}
 	out: string
 }
 funcs: Valid: {
-	in: [{
-		name: "pattern"
-		type: string
-	}]
+	in: #A0: string
 	out: bool
 }
 funcs: Match: {
-	in: [{
-		name: "pattern"
-		type: string
-	}, {
-		name: "s"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: bool
 }
 funcs: QuoteMeta: {
-	in: [{
-		name: "s"
-		type: string
-	}]
+	in: #A0: string
 	out: string
 }

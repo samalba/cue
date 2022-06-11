@@ -236,10 +236,7 @@ type Parts struct {
 // Split parses a time string into its individual parts.
 //
 //cue:func {
-//	in: [{
-//		name: "t"
-//		type: string
-//	}]
+//	in: #A0: string
 //	out: #Parts
 // }
 func Split(t string) (*Parts, error) {

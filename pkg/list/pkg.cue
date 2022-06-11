@@ -36,191 +36,124 @@ Descending: {
 	less: x > y
 }
 funcs: Drop: {
-	in: [{
-		name: "x"
-		type: [...]
-	}, {
-		name: "n"
-		type: int64
-	}]
+	in: {
+		#A0: [...]
+		#A1: int64
+	}
 	out: [...]
 }
 funcs: FlattenN: {
-	in: [{
-		name: "xs"
-		type: _
-	}, {
-		name: "depth"
-		type: int64
-	}]
+	in: {
+		#A0: _
+		#A1: int64
+	}
 	out: [...]
 }
 funcs: Repeat: {
-	in: [{
-		name: "x"
-		type: [...]
-	}, {
-		name: "count"
-		type: int64
-	}]
+	in: {
+		#A0: [...]
+		#A1: int64
+	}
 	out: [...]
 }
 funcs: Concat: {
-	in: [{
-		name: "a"
-		type: [...]
-	}]
+	in: #A0: [...]
 	out: [...]
 }
 funcs: Take: {
-	in: [{
-		name: "x"
-		type: [...]
-	}, {
-		name: "n"
-		type: int64
-	}]
+	in: {
+		#A0: [...]
+		#A1: int64
+	}
 	out: [...]
 }
 funcs: Slice: {
-	in: [{
-		name: "x"
-		type: [...]
-	}, {
-		name: "i"
-		type: int64
-	}, {
-		name: "j"
-		type: int64
-	}]
+	in: {
+		#A0: [...]
+		#A1: int64
+		#A2: int64
+	}
 	out: [...]
 }
 funcs: MinItems: {
-	in: [{
-		name: "a"
-		type: [...]
-	}, {
-		name: "n"
-		type: int64
-	}]
+	in: {
+		#A0: [...]
+		#A1: int64
+	}
 	out: bool
 }
 funcs: MaxItems: {
-	in: [{
-		name: "a"
-		type: [...]
-	}, {
-		name: "n"
-		type: int64
-	}]
+	in: {
+		#A0: [...]
+		#A1: int64
+	}
 	out: bool
 }
 funcs: UniqueItems: {
-	in: [{
-		name: "a"
-		type: [...]
-	}]
+	in: #A0: [...]
 	out: bool
 }
 funcs: Contains: {
-	in: [{
-		name: "a"
-		type: [...]
-	}, {
-		name: "v"
-		type: _
-	}]
+	in: {
+		#A0: [...]
+		#A1: _
+	}
 	out: bool
 }
 funcs: Avg: {
-	in: [{
-		name: "xs"
-		type: [... number]
-	}]
+	in: #A0: [... number]
 	out: number
 }
 funcs: Max: {
-	in: [{
-		name: "xs"
-		type: [... number]
-	}]
+	in: #A0: [... number]
 	out: number
 }
 funcs: Min: {
-	in: [{
-		name: "xs"
-		type: [... number]
-	}]
+	in: #A0: [... number]
 	out: number
 }
 funcs: Product: {
-	in: [{
-		name: "xs"
-		type: [... number]
-	}]
+	in: #A0: [... number]
 	out: number
 }
 funcs: Range: {
-	in: [{
-		name: "start"
-		type: number
-	}, {
-		name: "limit"
-		type: number
-	}, {
-		name: "step"
-		type: number
-	}]
+	in: {
+		#A0: number
+		#A1: number
+		#A2: number
+	}
 	out: [... number]
 }
 funcs: Sum: {
-	in: [{
-		name: "xs"
-		type: [... number]
-	}]
+	in: #A0: [... number]
 	out: number
 }
 funcs: Sort: {
-	in: [{
-		name: "list"
-		type: [...]
-	}, {
-		name: "cmp"
-		type: _
-	}]
+	in: {
+		#A0: [...]
+		#A1: _
+	}
 	out: [...]
 }
 funcs: SortStable: {
-	in: [{
-		name: "list"
-		type: [...]
-	}, {
-		name: "cmp"
-		type: _
-	}]
+	in: {
+		#A0: [...]
+		#A1: _
+	}
 	out: [...]
 }
 funcs: SortStrings: {
-	in: [{
-		name: "a"
-		type: [... string]
-	}]
+	in: #A0: [... string]
 	out: [... string]
 }
 funcs: IsSorted: {
-	in: [{
-		name: "list"
-		type: [...]
-	}, {
-		name: "cmp"
-		type: _
-	}]
+	in: {
+		#A0: [...]
+		#A1: _
+	}
 	out: bool
 }
 funcs: IsSortedStrings: {
-	in: [{
-		name: "a"
-		type: [... string]
-	}]
+	in: #A0: [... string]
 	out: bool
 }

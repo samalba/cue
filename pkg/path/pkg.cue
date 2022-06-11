@@ -6,275 +6,174 @@ Unix:    "unix"
 Windows: "windows"
 Plan9:   "plan9"
 funcs: Match: {
-	in: [{
-		name: "pattern"
-		type: string
-	}, {
-		name: "name"
-		type: string
-	}, {
-		name: "os"
-		type: OS
-	}]
+	in: {
+		#A0: string
+		#A1: string
+		#A2: OS
+	}
 	out: bool
-	in: [{
-		name: "pattern"
-		type: string
-	}, {
-		name: "name"
-		type: string
-	}, {
-		name: "os"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+		#A2: string
+	}
 	out: bool
 }
 Unix:    "unix"
 Windows: "windows"
 Plan9:   "plan9"
 funcs: Clean: {
-	in: [{
-		name: "path"
-		type: string
-	}, {
-		name: "os"
-		type: OS
-	}]
+	in: {
+		#A0: string
+		#A1: OS
+	}
 	out: string
-	in: [{
-		name: "path"
-		type: string
-	}, {
-		name: "os"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: string
 }
 funcs: ToSlash: {
-	in: [{
-		name: "path"
-		type: string
-	}, {
-		name: "os"
-		type: OS
-	}]
+	in: {
+		#A0: string
+		#A1: OS
+	}
 	out: string
-	in: [{
-		name: "path"
-		type: string
-	}, {
-		name: "os"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: string
 }
 funcs: FromSlash: {
-	in: [{
-		name: "path"
-		type: string
-	}, {
-		name: "os"
-		type: OS
-	}]
-	out: string
-	in: [{
-		name: "path"
-		type: string
-	}, {
-		name: "os"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: string
 }
 funcs: SplitList: {
-	in: [{
-		name: "path"
-		type: string
-	}, {
-		name: "os"
-		type: OS
-	}]
+	in: {
+		#A0: string
+		#A1: OS
+	}
 	out: [...string]
-	in: [{
-		name: "path"
-		type: string
-	}, {
-		name: "os"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: [... string]
 }
 funcs: Split: {
-	in: [{
-		name: "path"
-		type: string
-	}, {
-		name: "os"
-		type: OS
-	}]
+	in: {
+		#A0: string
+		#A1: OS
+	}
 	out: [...string]
-	in: [{
-		name: "path"
-		type: string
-	}, {
-		name: "os"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: [... string]
 }
 funcs: Join: {
-	in: [{
-		name: "elem"
-		type: [...string]
-	}, {
-		name: "os"
-		type: OS
-	}]
+	in: {
+		#A0: [...string]
+		#A1: OS
+	}
 	out: string
-	in: [{
-		name: "elem"
-		type: [... string]
-	}, {
-		name: "os"
-		type: string
-	}]
+	in: {
+		#A0: [... string]
+		#A1: string
+	}
 	out: string
 }
 funcs: Ext: {
-	in: [{
-		name: "path"
-		type: string
-	}, {
-		name: "os"
-		type: OS
-	}]
+	in: {
+		#A0: string
+		#A1: OS
+	}
 	out: string
-	in: [{
-		name: "path"
-		type: string
-	}, {
-		name: "os"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: string
 }
 funcs: Resolve: {
-	in: [{
-		name: "dir"
-		type: string
-	}, {
-		name: "sub"
-		type: string
-	}, {
-		name: "os"
-		type: OS
-	}]
+	in: {
+		#A0: string
+		#A1: string
+		#A2: OS
+	}
 	out: string
-	in: [{
-		name: "dir"
-		type: string
-	}, {
-		name: "sub"
-		type: string
-	}, {
-		name: "os"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+		#A2: string
+	}
 	out: string
 }
 funcs: Rel: {
-	in: [{
-		name: "basepath"
-		type: string
-	}, {
-		name: "targpath"
-		type: string
-	}, {
-		name: "os"
-		type: OS
-	}]
+	in: {
+		#A0: string
+		#A1: string
+		#A2: OS
+	}
 	out: string
-	in: [{
-		name: "basepath"
-		type: string
-	}, {
-		name: "targpath"
-		type: string
-	}, {
-		name: "os"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+		#A2: string
+	}
 	out: string
 }
 funcs: Base: {
-	in: [{
-		name: "path"
-		type: string
-	}, {
-		name: "os"
-		type: OS
-	}]
+	in: {
+		#A0: string
+		#A1: OS
+	}
 	out: string
-	in: [{
-		name: "path"
-		type: string
-	}, {
-		name: "os"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: string
 }
 funcs: Dir: {
-	in: [{
-		name: "path"
-		type: string
-	}, {
-		name: "os"
-		type: OS
-	}]
+	in: {
+		#A0: string
+		#A1: OS
+	}
 	out: string
-	in: [{
-		name: "path"
-		type: string
-	}, {
-		name: "os"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: string
 }
 funcs: IsAbs: {
-	in: [{
-		name: "path"
-		type: string
-	}, {
-		name: "os"
-		type: OS
-	}]
+	in: {
+		#A0: string
+		#A1: OS
+	}
 	out: bool
-	in: [{
-		name: "path"
-		type: string
-	}, {
-		name: "os"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: bool
 }
 funcs: VolumeName: {
-	in: [{
-		name: "path"
-		type: string
-	}, {
-		name: "os"
-		type: OS
-	}]
+	in: {
+		#A0: string
+		#A1: OS
+	}
 	out: string
-	in: [{
-		name: "path"
-		type: string
-	}, {
-		name: "os"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: string
 }

@@ -4,9 +4,6 @@ package md5
 Size:      16
 BlockSize: 64
 funcs: Sum: {
-	in: [{
-		name: "data"
-		type: bytes | string
-	}]
+	in: #A0: bytes | string
 	out: bytes | string
 }

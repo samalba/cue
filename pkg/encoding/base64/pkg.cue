@@ -2,42 +2,30 @@
 package base64
 
 funcs: EncodedLen: {
-	in: [{
-		name: "encoding"
-		type: _
-	}, {
-		name: "n"
-		type: int64
-	}]
+	in: {
+		#A0: _
+		#A1: int64
+	}
 	out: int64
 }
 funcs: DecodedLen: {
-	in: [{
-		name: "encoding"
-		type: _
-	}, {
-		name: "x"
-		type: int64
-	}]
+	in: {
+		#A0: _
+		#A1: int64
+	}
 	out: int64
 }
 funcs: Encode: {
-	in: [{
-		name: "encoding"
-		type: _
-	}, {
-		name: "src"
-		type: bytes | string
-	}]
+	in: {
+		#A0: _
+		#A1: bytes | string
+	}
 	out: string
 }
 funcs: Decode: {
-	in: [{
-		name: "encoding"
-		type: _
-	}, {
-		name: "s"
-		type: string
-	}]
+	in: {
+		#A0: _
+		#A1: string
+	}
 	out: bytes | string
 }

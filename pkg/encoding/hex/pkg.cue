@@ -2,37 +2,22 @@
 package hex
 
 funcs: EncodedLen: {
-	in: [{
-		name: "n"
-		type: int64
-	}]
+	in: #A0: int64
 	out: int64
 }
 funcs: DecodedLen: {
-	in: [{
-		name: "x"
-		type: int64
-	}]
+	in: #A0: int64
 	out: int64
 }
 funcs: Decode: {
-	in: [{
-		name: "s"
-		type: string
-	}]
+	in: #A0: string
 	out: bytes | string
 }
 funcs: Dump: {
-	in: [{
-		name: "data"
-		type: bytes | string
-	}]
+	in: #A0: bytes | string
 	out: string
 }
 funcs: Encode: {
-	in: [{
-		name: "src"
-		type: bytes | string
-	}]
+	in: #A0: bytes | string
 	out: string
 }

@@ -2,16 +2,10 @@
 package html
 
 funcs: Escape: {
-	in: [{
-		name: "s"
-		type: string
-	}]
+	in: #A0: string
 	out: string
 }
 funcs: Unescape: {
-	in: [{
-		name: "s"
-		type: string
-	}]
+	in: #A0: string
 	out: string
 }

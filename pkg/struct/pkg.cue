@@ -2,22 +2,16 @@
 package struct
 
 funcs: MinFields: {
-	in: [{
-		name: "object"
-		type: {...}
-	}, {
-		name: "n"
-		type: int64
-	}]
+	in: {
+		#A0: {...}
+		#A1: int64
+	}
 	out: _
 }
 funcs: MaxFields: {
-	in: [{
-		name: "object"
-		type: {...}
-	}, {
-		name: "n"
-		type: int64
-	}]
+	in: {
+		#A0: {...}
+		#A1: int64
+	}
 	out: bool
 }

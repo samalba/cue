@@ -10,15 +10,10 @@ SHA512:     "SHA512"
 SHA512_224: "SHA512_224"
 SHA512_256: "SHA512_256"
 funcs: Sign: {
-	in: [{
-		name: "hashName"
-		type: string
-	}, {
-		name: "key"
-		type: bytes | string
-	}, {
-		name: "data"
-		type: bytes | string
-	}]
+	in: {
+		#A0: string
+		#A1: bytes | string
+		#A2: bytes | string
+	}
 	out: bytes | string
 }

@@ -17,78 +17,48 @@ variants: {
 	Future:    4
 }
 funcs: Valid: {
-	in: [{
-		name: "s"
-		type: string
-	}]
+	in: #A0: string
 	out: _
 }
 funcs: Parse: {
-	in: [{
-		name: "s"
-		type: string
-	}]
+	in: #A0: string
 	out: string
 }
 funcs: ToString: {
-	in: [{
-		name: "x"
-		type: string
-	}]
+	in: #A0: string
 	out: string
 }
 funcs: URN: {
-	in: [{
-		name: "x"
-		type: string
-	}]
+	in: #A0: string
 	out: string
 }
 funcs: FromInt: {
-	in: [{
-		name: "i"
-		type: int
-	}]
+	in: #A0: int
 	out: string
 }
 funcs: ToInt: {
-	in: [{
-		name: "x"
-		type: string
-	}]
+	in: #A0: string
 	out: int
 }
 funcs: Variant: {
-	in: [{
-		name: "x"
-		type: string
-	}]
+	in: #A0: string
 	out: int64
 }
 funcs: Version: {
-	in: [{
-		name: "x"
-		type: string
-	}]
+	in: #A0: string
 	out: int64
 }
 funcs: SHA1: {
-	in: [{
-		name: "space"
-		type: string
-	}, {
-		name: "data"
-		type: bytes | string
-	}]
+	in: {
+		#A0: string
+		#A1: bytes | string
+	}
 	out: string
 }
 funcs: MD5: {
-	in: [{
-		name: "space"
-		type: string
-	}, {
-		name: "data"
-		type: bytes | string
-	}]
+	in: {
+		#A0: string
+		#A1: bytes | string
+	}
 	out: string
 }

@@ -2,99 +2,67 @@
 package bits
 
 funcs: Lsh: {
-	in: [{
-		name: "x"
-		type: int
-	}, {
-		name: "n"
-		type: uint64
-	}]
+	in: {
+		#A0: int
+		#A1: uint64
+	}
 	out: int
 }
 funcs: Rsh: {
-	in: [{
-		name: "x"
-		type: int
-	}, {
-		name: "n"
-		type: uint64
-	}]
+	in: {
+		#A0: int
+		#A1: uint64
+	}
 	out: int
 }
 funcs: At: {
-	in: [{
-		name: "x"
-		type: int
-	}, {
-		name: "i"
-		type: uint64
-	}]
+	in: {
+		#A0: int
+		#A1: uint64
+	}
 	out: uint64
 }
 funcs: Set: {
-	in: [{
-		name: "x"
-		type: int
-	}, {
-		name: "i"
-		type: int64
-	}, {
-		name: "bit"
-		type: uint64
-	}]
+	in: {
+		#A0: int
+		#A1: int64
+		#A2: uint64
+	}
 	out: int
 }
 funcs: And: {
-	in: [{
-		name: "a"
-		type: int
-	}, {
-		name: "b"
-		type: int
-	}]
+	in: {
+		#A0: int
+		#A1: int
+	}
 	out: int
 }
 funcs: Or: {
-	in: [{
-		name: "a"
-		type: int
-	}, {
-		name: "b"
-		type: int
-	}]
+	in: {
+		#A0: int
+		#A1: int
+	}
 	out: int
 }
 funcs: Xor: {
-	in: [{
-		name: "a"
-		type: int
-	}, {
-		name: "b"
-		type: int
-	}]
+	in: {
+		#A0: int
+		#A1: int
+	}
 	out: int
 }
 funcs: Clear: {
-	in: [{
-		name: "a"
-		type: int
-	}, {
-		name: "b"
-		type: int
-	}]
+	in: {
+		#A0: int
+		#A1: int
+	}
 	out: int
 }
 funcs: OnesCount: {
-	in: [{
-		name: "x"
-		type: int
-	}]
+	in: #A0: int
 	out: int64
 }
 funcs: Len: {
-	in: [{
-		name: "x"
-		type: int
-	}]
+	in: #A0: int
 	out: int64
 }

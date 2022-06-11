@@ -14,125 +14,77 @@ Below:         -1
 Exact:         0
 Above:         1
 funcs: Jacobi: {
-	in: [{
-		name: "x"
-		type: int
-	}, {
-		name: "y"
-		type: int
-	}]
+	in: {
+		#A0: int
+		#A1: int
+	}
 	out: int64
 }
 MaxBase: 62
 funcs: Floor: {
-	in: [{
-		name: "x"
-		type: number
-	}]
+	in: #A0: number
 	out: int
 }
 funcs: Ceil: {
-	in: [{
-		name: "x"
-		type: number
-	}]
+	in: #A0: number
 	out: int
 }
 funcs: Trunc: {
-	in: [{
-		name: "x"
-		type: number
-	}]
+	in: #A0: number
 	out: int
 }
 funcs: Round: {
-	in: [{
-		name: "x"
-		type: number
-	}]
+	in: #A0: number
 	out: int
 }
 funcs: RoundToEven: {
-	in: [{
-		name: "x"
-		type: number
-	}]
+	in: #A0: number
 	out: int
 }
 funcs: MultipleOf: {
-	in: [{
-		name: "x"
-		type: number
-	}, {
-		name: "y"
-		type: number
-	}]
+	in: {
+		#A0: number
+		#A1: number
+	}
 	out: bool
 }
 funcs: Abs: {
-	in: [{
-		name: "x"
-		type: number
-	}]
+	in: #A0: number
 	out: number
 }
 funcs: Acosh: {
-	in: [{
-		name: "x"
-		type: float64
-	}]
+	in: #A0: float64
 	out: float64
 }
 funcs: Asin: {
-	in: [{
-		name: "x"
-		type: float64
-	}]
+	in: #A0: float64
 	out: float64
 }
 funcs: Acos: {
-	in: [{
-		name: "x"
-		type: float64
-	}]
+	in: #A0: float64
 	out: float64
 }
 funcs: Asinh: {
-	in: [{
-		name: "x"
-		type: float64
-	}]
+	in: #A0: float64
 	out: float64
 }
 funcs: Atan: {
-	in: [{
-		name: "x"
-		type: float64
-	}]
+	in: #A0: float64
 	out: float64
 }
 funcs: Atan2: {
-	in: [{
-		name: "y"
-		type: float64
-	}, {
-		name: "x"
-		type: float64
-	}]
+	in: {
+		#A0: float64
+		#A1: float64
+	}
 	out: float64
 }
 funcs: Atanh: {
-	in: [{
-		name: "x"
-		type: float64
-	}]
+	in: #A0: float64
 	out: float64
 }
 funcs: Cbrt: {
-	in: [{
-		name: "x"
-		type: number
-	}]
+	in: #A0: number
 	out: number
 }
 E:       2.71828182845904523536028747135266249775724709369995957496696763
@@ -147,281 +99,173 @@ Log2E:   1.442695040888963407359924681001892137426645954152985934135449408
 Ln10:    2.3025850929940456840179914546843642076011014886287729760333278
 Log10E:  0.43429448190325182765112891891660508229439700580366656611445378
 funcs: Copysign: {
-	in: [{
-		name: "x"
-		type: number
-	}, {
-		name: "y"
-		type: number
-	}]
+	in: {
+		#A0: number
+		#A1: number
+	}
 	out: number
 }
 funcs: Dim: {
-	in: [{
-		name: "x"
-		type: number
-	}, {
-		name: "y"
-		type: number
-	}]
+	in: {
+		#A0: number
+		#A1: number
+	}
 	out: number
 }
 funcs: Erf: {
-	in: [{
-		name: "x"
-		type: float64
-	}]
+	in: #A0: float64
 	out: float64
 }
 funcs: Erfc: {
-	in: [{
-		name: "x"
-		type: float64
-	}]
+	in: #A0: float64
 	out: float64
 }
 funcs: Erfinv: {
-	in: [{
-		name: "x"
-		type: float64
-	}]
+	in: #A0: float64
 	out: float64
 }
 funcs: Erfcinv: {
-	in: [{
-		name: "x"
-		type: float64
-	}]
+	in: #A0: float64
 	out: float64
 }
 funcs: Exp: {
-	in: [{
-		name: "x"
-		type: number
-	}]
+	in: #A0: number
 	out: number
 }
 funcs: Exp2: {
-	in: [{
-		name: "x"
-		type: number
-	}]
+	in: #A0: number
 	out: number
 }
 funcs: Expm1: {
-	in: [{
-		name: "x"
-		type: float64
-	}]
+	in: #A0: float64
 	out: float64
 }
 funcs: Gamma: {
-	in: [{
-		name: "x"
-		type: float64
-	}]
+	in: #A0: float64
 	out: float64
 }
 funcs: Hypot: {
-	in: [{
-		name: "p"
-		type: float64
-	}, {
-		name: "q"
-		type: float64
-	}]
+	in: {
+		#A0: float64
+		#A1: float64
+	}
 	out: float64
 }
 funcs: J0: {
-	in: [{
-		name: "x"
-		type: float64
-	}]
+	in: #A0: float64
 	out: float64
 }
 funcs: Y0: {
-	in: [{
-		name: "x"
-		type: float64
-	}]
+	in: #A0: float64
 	out: float64
 }
 funcs: J1: {
-	in: [{
-		name: "x"
-		type: float64
-	}]
+	in: #A0: float64
 	out: float64
 }
 funcs: Y1: {
-	in: [{
-		name: "x"
-		type: float64
-	}]
+	in: #A0: float64
 	out: float64
 }
 funcs: Jn: {
-	in: [{
-		name: "n"
-		type: int64
-	}, {
-		name: "x"
-		type: float64
-	}]
+	in: {
+		#A0: int64
+		#A1: float64
+	}
 	out: float64
 }
 funcs: Yn: {
-	in: [{
-		name: "n"
-		type: int64
-	}, {
-		name: "x"
-		type: float64
-	}]
+	in: {
+		#A0: int64
+		#A1: float64
+	}
 	out: float64
 }
 funcs: Ldexp: {
-	in: [{
-		name: "frac"
-		type: float64
-	}, {
-		name: "exp"
-		type: int64
-	}]
+	in: {
+		#A0: float64
+		#A1: int64
+	}
 	out: float64
 }
 funcs: Log: {
-	in: [{
-		name: "x"
-		type: number
-	}]
+	in: #A0: number
 	out: number
 }
 funcs: Log10: {
-	in: [{
-		name: "x"
-		type: number
-	}]
+	in: #A0: number
 	out: number
 }
 funcs: Log2: {
-	in: [{
-		name: "x"
-		type: number
-	}]
+	in: #A0: number
 	out: number
 }
 funcs: Log1p: {
-	in: [{
-		name: "x"
-		type: float64
-	}]
+	in: #A0: float64
 	out: float64
 }
 funcs: Logb: {
-	in: [{
-		name: "x"
-		type: float64
-	}]
+	in: #A0: float64
 	out: float64
 }
 funcs: Ilogb: {
-	in: [{
-		name: "x"
-		type: float64
-	}]
+	in: #A0: float64
 	out: int64
 }
 funcs: Mod: {
-	in: [{
-		name: "x"
-		type: float64
-	}, {
-		name: "y"
-		type: float64
-	}]
+	in: {
+		#A0: float64
+		#A1: float64
+	}
 	out: float64
 }
 funcs: Pow: {
-	in: [{
-		name: "x"
-		type: number
-	}, {
-		name: "y"
-		type: number
-	}]
+	in: {
+		#A0: number
+		#A1: number
+	}
 	out: number
 }
 funcs: Pow10: {
-	in: [{
-		name: "n"
-		type: int32
-	}]
+	in: #A0: int32
 	out: number
 }
 funcs: Remainder: {
-	in: [{
-		name: "x"
-		type: float64
-	}, {
-		name: "y"
-		type: float64
-	}]
+	in: {
+		#A0: float64
+		#A1: float64
+	}
 	out: float64
 }
 funcs: Signbit: {
-	in: [{
-		name: "x"
-		type: number
-	}]
+	in: #A0: number
 	out: bool
 }
 funcs: Cos: {
-	in: [{
-		name: "x"
-		type: float64
-	}]
+	in: #A0: float64
 	out: float64
 }
 funcs: Sin: {
-	in: [{
-		name: "x"
-		type: float64
-	}]
+	in: #A0: float64
 	out: float64
 }
 funcs: Sinh: {
-	in: [{
-		name: "x"
-		type: float64
-	}]
+	in: #A0: float64
 	out: float64
 }
 funcs: Cosh: {
-	in: [{
-		name: "x"
-		type: float64
-	}]
+	in: #A0: float64
 	out: float64
 }
 funcs: Sqrt: {
-	in: [{
-		name: "x"
-		type: float64
-	}]
+	in: #A0: float64
 	out: float64
 }
 funcs: Tan: {
-	in: [{
-		name: "x"
-		type: float64
-	}]
+	in: #A0: float64
 	out: float64
 }
 funcs: Tanh: {
-	in: [{
-		name: "x"
-		type: float64
-	}]
+	in: #A0: float64
 	out: float64
 }

@@ -95,13 +95,10 @@ func (b *lazybuf) string() string {
 // https://9p.io/sys/doc/lexnames.html
 //
 //cue:func {
-//	in: [{
-//		name: "path"
-//		type: string
-//	}, {
-//		name: "os"
-//		type: OS
-//	}]
+//	in: {
+//		#A0: string
+//		#A1: OS
+//	}
 //	out: string
 //
 // }
@@ -188,13 +185,10 @@ func clean(path string, os os) string {
 // replaced by multiple slashes.
 //
 //cue:func {
-//	in: [{
-//		name: "path"
-//		type: string
-//	}, {
-//		name: "os"
-//		type: OS
-//	}]
+//	in: {
+//		#A0: string
+//		#A1: OS
+//	}
 //	out: string
 //
 // }
@@ -213,14 +207,10 @@ func toSlash(path string, os os) string {
 // in path with a separator character. Multiple slashes are replaced
 // by multiple separators.
 //
-//cue:func {
-//	in: [{
-//		name: "path"
-//		type: string
-//	}, {
-//		name: "os"
-//		type: OS
-//	}]
+//	in: {
+//		#A0: string
+//		#A1: OS
+//	}
 //	out: string
 //
 // }
@@ -241,13 +231,10 @@ func fromSlash(path string, os os) string {
 // string.
 //
 //cue:func {
-//	in: [{
-//		name: "path"
-//		type: string
-//	}, {
-//		name: "os"
-//		type: OS
-//	}]
+//	in: {
+//		#A0: string
+//		#A1: OS
+//	}
 //	out: [...string]
 // }
 func SplitList(path string, os string) []string {
@@ -261,13 +248,10 @@ func SplitList(path string, os string) []string {
 // The default value for os is Unix.
 //
 //cue:func {
-//	in: [{
-//		name: "path"
-//		type: string
-//	}, {
-//		name: "os"
-//		type: OS
-//	}]
+//	in: {
+//		#A0: string
+//		#A1: OS
+//	}
 //	out: [...string]
 // }
 func Split(path string, os string) []string {
@@ -290,13 +274,10 @@ func Split(path string, os string) []string {
 // The default value for os is Unix.
 //
 //cue:func {
-//	in: [{
-//		name: "elem"
-//		type: [...string]
-//	}, {
-//		name: "os"
-//		type: OS
-//	}]
+//	in: {
+//		#A0: [...string]
+//		#A1: OS
+//	}
 //	out: string
 //
 // }
@@ -310,13 +291,10 @@ func Join(elem []string, os string) string {
 // no dot. The default value for os is Unix.
 //
 //cue:func {
-//	in: [{
-//		name: "path"
-//		type: string
-//	}, {
-//		name: "os"
-//		type: OS
-//	}]
+//	in: {
+//		#A0: string
+//		#A1: OS
+//	}
 //	out: string
 //
 // }
@@ -335,18 +313,12 @@ func Ext(path string, os string) string {
 // Resolve calls Clean on the result. The default value for os is Unix.
 //
 //cue:func {
-//	in: [{
-//		name: "dir"
-//		type: string
-//	}, {
-//		name: "sub"
-//		type: string
-//	}, {
-//		name: "os"
-//		type: OS
-//	}]
+//	in: {
+//		#A0: string
+//		#A1: string
+//		#A2: OS
+//	}
 //	out: string
-//
 // }
 func Resolve(dir, sub string, os string) string {
 	x := getOS(os)
@@ -367,16 +339,11 @@ func Resolve(dir, sub string, os string) string {
 // Rel calls Clean on the result. The default value for os is Unix.
 //
 //cue:func {
-//	in: [{
-//		name: "basepath"
-//		type: string
-//	}, {
-//		name: "targpath"
-//		type: string
-//	}, {
-//		name: "os"
-//		type: OS
-//	}]
+//	in: {
+//		#A0: string
+//		#A1: string
+//		#A2: OS
+//	}
 //	out: string
 //
 // }
@@ -456,13 +423,10 @@ func Rel(basepath, targpath string, os string) (string, error) {
 // The default value for os is Unix.
 //
 //cue:func {
-//	in: [{
-//		name: "path"
-//		type: string
-//	}, {
-//		name: "os"
-//		type: OS
-//	}]
+//	in: {
+//		#A0: string
+//		#A1: OS
+//	}
 //	out: string
 //
 // }
@@ -501,13 +465,10 @@ func Base(path string, os string) string {
 // The default value for os is Unix.
 //
 //cue:func {
-//	in: [{
-//		name: "path"
-//		type: string
-//	}, {
-//		name: "os"
-//		type: OS
-//	}]
+//	in: {
+//		#A0: string
+//		#A1: OS
+//	}
 //	out: string
 //
 // }
@@ -531,13 +492,10 @@ func Dir(path string, os string) string {
 // a validator.
 //
 //cue:func {
-//	in: [{
-//		name: "path"
-//		type: string
-//	}, {
-//		name: "os"
-//		type: OS
-//	}]
+//	in: {
+//		#A0: string
+//		#A1: OS
+//	}
 //	out: bool
 //
 // }
@@ -552,13 +510,10 @@ func IsAbs(path string, os string) bool {
 // The default value for os is Windows.
 //
 //cue:func {
-//	in: [{
-//		name: "path"
-//		type: string
-//	}, {
-//		name: "os"
-//		type: OS
-//	}]
+//	in: {
+//		#A0: string
+//		#A1: OS
+//	}
 //	out: string
 // }
 func VolumeName(path string, os string) string {

@@ -17,24 +17,15 @@ Second:      1000000000
 Minute:      60000000000
 Hour:        3600000000000
 funcs: Duration: {
-	in: [{
-		name: "s"
-		type: string
-	}]
+	in: #A0: string
 	out: bool
 }
 funcs: FormatDuration: {
-	in: [{
-		name: "d"
-		type: int64
-	}]
+	in: #A0: int64
 	out: string
 }
 funcs: ParseDuration: {
-	in: [{
-		name: "s"
-		type: string
-	}]
+	in: #A0: string
 	out: int64
 }
 ANSIC:       "Mon Jan _2 15:04:05 2006"
@@ -70,61 +61,40 @@ Thursday:    4
 Friday:      5
 Saturday:    6
 funcs: Time: {
-	in: [{
-		name: "s"
-		type: string
-	}]
+	in: #A0: string
 	out: bool
 }
 funcs: Format: {
-	in: [{
-		name: "value"
-		type: string
-	}, {
-		name: "layout"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: bool
 }
 funcs: FormatString: {
-	in: [{
-		name: "layout"
-		type: string
-	}, {
-		name: "value"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: string
 }
 funcs: Parse: {
-	in: [{
-		name: "layout"
-		type: string
-	}, {
-		name: "value"
-		type: string
-	}]
+	in: {
+		#A0: string
+		#A1: string
+	}
 	out: string
 }
 funcs: Unix: {
-	in: [{
-		name: "sec"
-		type: int64
-	}, {
-		name: "nsec"
-		type: int64
-	}]
+	in: {
+		#A0: int64
+		#A1: int64
+	}
 	out: string
 }
 funcs: Split: {
-	in: [{
-		name: "t"
-		type: string
-	}]
+	in: #A0: string
 	out: #Parts
-	in: [{
-		name: "t"
-		type: string
-	}]
+	in: #A0: string
 	out: _
 }

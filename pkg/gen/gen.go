@@ -351,18 +351,13 @@ func (g *generator) genFunc(x *goast.FuncDecl) error {
 
 	args := []string{}
 	vals := []string{}
-	in := &ast.ListLit{}
+	in := &ast.StructLit{}
 	for _, f := range x.Type.Params.List {
 		for _, name := range f.Names {
 			typ := strings.Title(g.goKind(f.Type))
+			in.Elts = append(in.Elts, astField(fmt.Sprintf("#A%d", len(args)), g.goTypeToCUE(f.Type)))
 			vals = append(vals, fmt.Sprintf("c.%s(%d)", typ, len(args)))
 			args = append(args, name.Name)
-			in.Elts = append(in.Elts, &ast.StructLit{
-				Elts: []ast.Decl{
-					astField("name", astString(name.Name)),
-					astField("type", g.goTypeToCUE(f.Type)),
-				},
-			})
 		}
 	}
 	out := g.goTypeToCUE(x.Type.Results.List[0].Type)

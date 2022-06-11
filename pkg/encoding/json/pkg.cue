@@ -2,74 +2,45 @@
 package json
 
 funcs: Valid: {
-	in: [{
-		name: "data"
-		type: bytes | string
-	}]
+	in: #A0: bytes | string
 	out: bool
 }
 funcs: Compact: {
-	in: [{
-		name: "src"
-		type: bytes | string
-	}]
+	in: #A0: bytes | string
 	out: string
 }
 funcs: Indent: {
-	in: [{
-		name: "src"
-		type: bytes | string
-	}, {
-		name: "prefix"
-		type: string
-	}, {
-		name: "indent"
-		type: string
-	}]
+	in: {
+		#A0: bytes | string
+		#A1: string
+		#A2: string
+	}
 	out: string
 }
 funcs: HTMLEscape: {
-	in: [{
-		name: "src"
-		type: bytes | string
-	}]
+	in: #A0: bytes | string
 	out: string
 }
 funcs: Marshal: {
-	in: [{
-		name: "v"
-		type: _
-	}]
+	in: #A0: _
 	out: string
 }
 funcs: MarshalStream: {
-	in: [{
-		name: "v"
-		type: _
-	}]
+	in: #A0: _
 	out: string
 }
 funcs: UnmarshalStream: {
-	in: [{
-		name: "data"
-		type: bytes | string
-	}]
+	in: #A0: bytes | string
 	out: _
 }
 funcs: Unmarshal: {
-	in: [{
-		name: "b"
-		type: bytes | string
-	}]
+	in: #A0: bytes | string
 	out: _
 }
 funcs: Validate: {
-	in: [{
-		name: "b"
-		type: bytes | string
-	}, {
-		name: "v"
-		type: _
-	}]
+	in: {
+		#A0: bytes | string
+		#A1: _
+	}
 	out: bool
 }

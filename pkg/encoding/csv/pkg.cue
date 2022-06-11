@@ -2,16 +2,10 @@
 package csv
 
 funcs: Encode: {
-	in: [{
-		name: "x"
-		type: _
-	}]
+	in: #A0: _
 	out: string
 }
 funcs: Decode: {
-	in: [{
-		name: "r"
-		type: bytes | string
-	}]
+	in: #A0: bytes | string
 	out: [...]
 }
