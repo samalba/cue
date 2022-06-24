@@ -27,11 +27,13 @@ package adt
 import (
 	"fmt"
 	"html/template"
+	"log"
 	"strings"
 
 	"cuelang.org/go/cue/ast"
 	"cuelang.org/go/cue/errors"
 	"cuelang.org/go/cue/token"
+	"github.com/rogpeppe/misc/runtime/debug"
 )
 
 // TODO TODO TODO TODO TODO TODO  TODO TODO TODO  TODO TODO TODO  TODO TODO TODO
@@ -168,9 +170,9 @@ func (c *OpContext) Unify(v *Vertex, state VertexStatus) {
 	// defer c.PopVertex(c.PushVertex(v))
 	if Debug {
 		c.nest++
-		c.Logf(v, "Unify")
+		c.Logf(v, "Unify {")
 		defer func() {
-			c.Logf(v, "END Unify")
+			c.Logf(v, " } END Unify")
 			c.nest--
 		}()
 	}
@@ -1271,6 +1273,8 @@ func (n *nodeContext) addExprConjunct(v Conjunct) {
 // evalExpr is only called by addExprConjunct. If an error occurs, it records
 // the error in n and returns nil.
 func (n *nodeContext) evalExpr(v Conjunct) {
+	log.Printf("evalExpr %T {", v)
+	defer log.Printf("}")
 	// Require an Environment.
 	ctx := n.ctx
 
@@ -1604,6 +1608,7 @@ func (n *nodeContext) addValueConjunct(env *Environment, v Value, id CloseInfo) 
 		n.addBottom(b)
 		return
 	case *Builtin:
+		log.Printf("calling Builtin.BaseValidator on %v", b.Name)
 		if v := b.BareValidator(); v != nil {
 			n.addValueConjunct(env, v, id)
 			return
@@ -1683,15 +1688,19 @@ func (n *nodeContext) addValueConjunct(env *Environment, v Value, id CloseInfo) 
 		}
 
 	case Validator:
+		log.Printf("addValueConjunct Validator %T callers: %s {", x, debug.Callers(2, 5))
+		defer log.Printf("}")
 		// This check serves as simplifier, but also to remove duplicates.
 		for i, y := range n.checks {
 			if b := SimplifyValidator(ctx, x, y); b != nil {
+				log.Printf("validator is redundant")
 				n.checks[i] = b
 				return
 			}
 		}
 		n.updateNodeType(x.Kind(), x, id)
 		n.checks = append(n.checks, x)
+		log.Printf("%d checks now", len(n.checks))
 
 	case *Vertex:
 	// handled above.

@@ -18,6 +18,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strconv"
+	"strings"
 
 	"cuelang.org/go/cue"
 	"cuelang.org/go/cue/errors"
@@ -27,7 +29,6 @@ import (
 	"cuelang.org/go/internal/core/compile"
 	"cuelang.org/go/internal/core/convert"
 	"cuelang.org/go/internal/core/runtime"
-	"github.com/kr/pretty"
 )
 
 // A Builtin is a Builtin function or constant.
@@ -47,7 +48,7 @@ import (
 //	For any of the above, including interface{} and these types recursively:
 //	[]T
 //	map[string]T
-type Builtin struct {
+type XBuiltin struct {
 	Name   string
 	Pkg    adt.Feature
 	Params []Param
@@ -76,144 +77,147 @@ var (
 )
 
 func (p *Package) MustCompile(opCtx *adt.OpContext, importPath string) *adt.Vertex {
-	log.Printf("opCtx.Runtime: %T", opCtx.Runtime)
+	v, err := p.compile(opCtx, importPath)
+	if err != nil {
+		panic(fmt.Errorf("cannot compile builtin package %q: %v", importPath, err))
+	}
+	return v
+}
 
-	//ctx := (*cue.Context)(opCtx.Runtime.(*runtime.Runtime))
-	//pkgLabel := ctx.StringLabel(importPath)
-	//st := &adt.StructLit{}
-	//if len(p.Native) > 0 {
-	//	obj.AddConjunct(adt.MakeRootConjunct(nil, st))
-	//}
-
+func (p *Package) compile(opCtx *adt.OpContext, importPath string) (*adt.Vertex, error) {
 	f, err := parser.ParseFile(importPath, p.CUE)
 	if err != nil {
-		panic(fmt.Errorf("could not parse %v: %v", p.CUE, err))
+		return nil, fmt.Errorf("could not parse %q: %v", p.CUE, err)
 	}
-
-	v, err := compile.Files(nil, opCtx, importPath, f)
+	pv, err := compile.Files(nil, opCtx, importPath, f)
 	if err != nil {
-		panic(fmt.Errorf("could compile parse %v: %v", p.CUE, err))
+		return nil, fmt.Errorf("could not compile %q: %v", p.CUE, err)
 	}
-	ensureStruct(opCtx, v)
-	//pkgLabel := opCtx.StringLabel(importPath)
-	//st := &adt.StructLit{}
+	pv.Finalize(opCtx)
+	if k := pv.Kind(); k != adt.StructKind {
+		return nil, fmt.Errorf("top level is %v not struct", k)
+	}
+
+	c := &compiler{
+		opCtx:           opCtx,
+		pkg:             p,
+		importPath:      importPath,
+		importPathLabel: opCtx.StringLabel(importPath),
+		inLabel:         opCtx.StringLabel("in"),
+		outLabel:        opCtx.StringLabel("out"),
+	}
 	funcsLabel := opCtx.StringLabel("funcs")
-	log.Printf("%d arcs; %d conjuncts; %d structs", len(v.Arcs), len(v.Conjuncts), len(v.Structs))
-	log.Printf("conjunct decls %#v", v.Conjuncts[0].Field().(*adt.StructLit).Decls)
-	var funcsArc *adt.Vertex
-	for _, a := range v.Arcs {
-		a.Finalize(opCtx)
-		log.Printf("feature: (%v): %v; %d conjuncts; %d arcs; base %T", a.Label == funcsLabel, a.Label.IdentString(opCtx), len(a.Conjuncts), len(a.Arcs), a.BaseValue)
-		if a.Label == funcsLabel {
-			funcsArc = a
+	newArcs := make([]*adt.Vertex, 0, len(pv.Arcs))
+	for _, a := range pv.Arcs {
+		if a.Label != funcsLabel {
+			// It's a straight-up value: just add it as-is.
+			newArcs = append(newArcs, a)
+			continue
+		}
+		// It's the funcs struct. Add each member as a built-in function.
+		for _, funcArc := range a.Arcs {
+			b, err := c.newBuiltin(funcArc)
+			if err != nil {
+				return nil, fmt.Errorf("cannot make builtin for %s: %v", funcArc.Label.StringValue(opCtx), err)
+			}
+			// NB this is pretty sleazy.
+			funcArc.BaseValue = b
+			funcArc.Conjuncts = nil
+			funcArc.Structs = nil
+			newArcs = append(newArcs, funcArc)
 		}
 	}
-	if funcsArc != nil {
-		ensureStruct(opCtx, funcsArc)
-		log.Printf("printing funcsArc (%d members)", len(funcsArc.Arcs))
-		for _, a := range funcsArc.Arcs {
-			log.Printf("func: %v", a.Label.IdentString(opCtx))
-		}
-	}
+	pv.Arcs = newArcs
 
-	//obj := &adt.Vertex{}
-	//if len(p.Native) > 0 {
-	//	obj.AddConjunct(adt.MakeRootConjunct(nil, st))
-	//}
-	// TODO
-	//export.VertexFeatures(ctx, v)
-
-	//	v := ctx.BuildFile(f)
-	//	if err := v.Err(); err != nil {
-	//		panic(fmt.Errorf("cannot build %s: %v", importPath, err))
-	//	}
-	//	iter, err := v.Fields()
-	//	if err != nil {
-	//		panic(err)
-	//	}
-	//	for iter.Next() {
-	//		fieldVal := iter.Value()
-	//		if v := fieldVal.LookupPath(funcPath); v.Err() == nil {
-	//			log.Printf("make builtin %v", iter.Selector())
-	//		} else if v := fieldVal.LookupPath(valuePath); v.Err() == nil {
-	//			log.Printf("make value %v", iter.Selector())
-	//		} else {
-	//			panic(fmt.Errorf("unrecognized builtin kind %v", iter.Selector()))
-	//		}
-	//	}
-
-	//	obj.AddConjunct(c)
-	//	for _, b := range p.Native {
-	//		b.Pkg = pkgLabel
-	//
-	//		f := ctx.StringLabel(b.Name) // never starts with _
-	//		// n := &node{baseValue: newBase(imp.Path)}
-	//		var v adt.Expr = toBuiltin(ctx, b)
-	//		if b.Const != "" {
-	//			v = mustParseConstBuiltin(ctx, b.Name, b.Const)
-	//		}
-	//		st.Decls = append(st.Decls, &adt.Field{
-	//			Label: f,
-	//			Value: v,
-	//		})
-	//	}
-	//
-	//	// Parse builtin CUE
-	//	if p.CUE != "" {
-	//	}
-	//
-	//	// We could compile lazily, but this is easier for debugging.
-	//	obj.Finalize(ctx)
-	//	if err := obj.Err(ctx, adt.Finalized); err != nil {
-	//		panic(err.Err)
-	//	}
-
-	return nil
+	return pv, nil
 }
 
-func ensureStruct(opCtx *adt.OpContext, v *adt.Vertex) {
-	v.Finalize(opCtx)
-	v = v.Default()
-	if v, ok := v.BaseValue.(*adt.Bottom); ok {
-		panic(fmt.Errorf("got bottom: %v", v.Err))
-	}
-	if k := v.Kind(); k != adt.StructKind {
-		pretty.Println(v)
-		panic(fmt.Errorf("unexpected kind for export data; got %v want %v", k, adt.StructKind))
-	}
+// compiler is a utility type that allows us to avoid recomputing
+// labels for each builtin function.
+type compiler struct {
+	pkg               *Package
+	opCtx             *adt.OpContext
+	importPath        string
+	importPathLabel   adt.Feature
+	inLabel, outLabel adt.Feature // "in", "out"
 }
 
-func toBuiltin(ctx *adt.OpContext, b *Builtin) *adt.Builtin {
-	params := make([]adt.Param, len(b.Params))
-	for i, p := range b.Params {
-		params[i].Value = p.Value
-		if params[i].Value == nil {
-			params[i].Value = &adt.BasicType{K: p.Kind}
+func (c *compiler) newBuiltin(bv *adt.Vertex) (*adt.Builtin, error) {
+	if k := bv.Kind(); k != adt.StructKind {
+		return nil, fmt.Errorf("builtin info is %v not struct", k)
+	}
+	params := make([]adt.Param, 0, 3)
+	in := bv.Lookup(c.inLabel)
+	if in == nil {
+		return nil, fmt.Errorf("no in parameter found")
+	}
+	if k := in.Kind(); k != adt.StructKind {
+		return nil, fmt.Errorf("in parameter is %v not struct", k)
+	}
+	for _, arg := range in.Arcs {
+		argName := arg.Label.IdentString(c.opCtx)
+		if !strings.HasPrefix(argName, "#A") {
+			// TODO allow named arguments instead of panicking.
+			return nil, fmt.Errorf("unexpected arg field %q", argName)
+		}
+		argIdx, err := strconv.Atoi(argName[2:])
+		if err != nil {
+			return nil, fmt.Errorf("invalid arg index in arg %q", argName)
+		}
+		if argIdx < 0 {
+			return nil, fmt.Errorf("negative arg index in arg %q", argName)
+		}
+		if argIdx >= len(params) {
+			for j := len(params); j <= argIdx; j++ {
+				params = append(params, adt.Param{})
+			}
+		}
+		params[argIdx] = adt.Param{
+			Value: arg,
 		}
 	}
-
-	x := &adt.Builtin{
+	for i, p := range params {
+		if p.Value == nil {
+			return nil, fmt.Errorf("no parameter type defined for argument %d", i)
+		}
+	}
+	out := bv.Lookup(c.outLabel)
+	if out == nil {
+		return nil, fmt.Errorf("no out parameter found")
+	}
+	funcNameLabel := bv.Label
+	funcName := funcNameLabel.StringValue(c.opCtx)
+	f := c.pkg.Funcs[funcName]
+	if f == nil {
+		return nil, fmt.Errorf("no underlying function found")
+	}
+	return &adt.Builtin{
+		Package: c.importPathLabel,
+		Name:    funcName,
+		Func:    c.makeFunc(f, funcNameLabel),
 		Params:  params,
-		Result:  b.Result,
-		Package: b.Pkg,
-		Name:    b.Name,
-	}
-	x.Func = func(ctx *adt.OpContext, args []adt.Value) (ret adt.Expr) {
-		// call, _ := ctx.Source().(*ast.CallExpr)
-		c := &CallCtxt{
-			ctx:     ctx,
-			args:    args,
-			builtin: b,
+		Result:  out,
+	}, nil
+}
+
+func (c *compiler) makeFunc(f func(c *CallCtxt), funcName adt.Feature) func(ctx *adt.OpContext, args []adt.Value) adt.Expr {
+	return func(ctx *adt.OpContext, args []adt.Value) (ret adt.Expr) {
+		callCtx := &CallCtxt{
+			ctx:        ctx,
+			args:       args,
+			importPath: c.importPathLabel,
+			funcName:   funcName,
 		}
+		log.Printf("calling %v", callCtx.Name())
 		defer func() {
-			var errVal interface{} = c.Err
+			var errVal interface{} = callCtx.Err
 			if err := recover(); err != nil {
 				errVal = err
 			}
-			ret = processErr(c, errVal, ret)
+			ret = processErr(callCtx, errVal, ret)
 		}()
-		b.Func(c)
-		switch v := c.Ret.(type) {
+		f(callCtx)
+		switch v := callCtx.Ret.(type) {
 		case nil:
 			// Validators may return a nil in case validation passes.
 			return nil
@@ -232,38 +236,11 @@ func toBuiltin(ctx *adt.OpContext, b *Builtin) *adt.Builtin {
 			}
 			return nil
 		}
-		if c.Err != nil {
+		if callCtx.Err != nil {
 			return nil
 		}
-		return convert.GoValueToValue(ctx, c.Ret, true)
+		return convert.GoValueToValue(ctx, callCtx.Ret, true)
 	}
-	return x
-}
-
-// newConstBuiltin parses and creates any CUE expression that does not have
-// fields.
-func mustParseConstBuiltin(ctx adt.Runtime, name, val string) adt.Expr {
-	expr, err := parser.ParseExpr("<builtin:"+name+">", val)
-	if err != nil {
-		panic(err)
-	}
-	c, err := compile.Expr(nil, ctx, "_", expr)
-	if err != nil {
-		panic(err)
-	}
-	return c.Expr()
-
-}
-
-func (x *Builtin) name(ctx *adt.OpContext) string {
-	if x.Pkg == 0 {
-		return x.Name
-	}
-	return fmt.Sprintf("%s.%s", x.Pkg.StringValue(ctx), x.Name)
-}
-
-func (x *Builtin) isValidator() bool {
-	return len(x.Params) == 1 && x.Result == adt.BoolKind
 }
 
 func processErr(call *CallCtxt, errVal interface{}, ret adt.Expr) adt.Expr {

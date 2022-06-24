@@ -63,4 +63,4 @@ func (e *Unifier) NewContext(v *adt.Vertex) *adt.OpContext {
 	return NewContext(e.r, v)
 }
 
-var printConfig = &debug.Config{Compact: true}
+var printConfig = &debug.Config{} // Compact: true}

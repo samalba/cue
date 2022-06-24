@@ -27,10 +27,12 @@ import (
 
 // CallCtxt is passed to builtin implementations that need to use a cue.Value. This is an internal type. Its interface may change.
 type CallCtxt struct {
-	ctx     *adt.OpContext
-	builtin *Builtin
-	Err     interface{}
-	Ret     interface{}
+	ctx        *adt.OpContext
+	importPath adt.Feature
+	funcName   adt.Feature
+
+	Err interface{}
+	Ret interface{}
 
 	args []adt.Value
 }
@@ -40,18 +42,17 @@ func (c *CallCtxt) Pos() token.Pos {
 }
 
 func (c *CallCtxt) Name() string {
-	return c.builtin.name(c.ctx)
+	return c.importPath.StringValue(c.ctx) + "." + c.funcName.SelectorString(c.ctx)
 }
 
-// Do returns whether the call should be done.
+// Do returns whether the call should be done (i.e. whether all parameters
+// have been determined successfully)
 func (c *CallCtxt) Do() bool {
 	return c.Err == nil
 }
 
 func (c *CallCtxt) Value(i int) cue.Value {
 	v := value.Make(c.ctx, c.args[i])
-	// TODO: remove default
-	// v, _ = v.Default()
 	if !v.IsConcrete() {
 		c.errcf(adt.IncompleteError, "non-concrete argument %d", i)
 	}

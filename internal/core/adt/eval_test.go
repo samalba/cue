@@ -62,8 +62,12 @@ func TestEval(t *testing.T) {
 			return
 		}
 
+		t.Logf("built OK")
+
 		e := eval.New(r)
 		ctx := e.NewContext(v)
+
+		t.Logf("finalizing")
 		v.Finalize(ctx)
 
 		stats := ctx.Stats()

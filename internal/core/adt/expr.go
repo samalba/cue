@@ -18,9 +18,12 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"log"
 	"regexp"
+	"sync/atomic"
 
 	"github.com/cockroachdb/apd/v2"
+	"github.com/rogpeppe/misc/runtime/debug"
 
 	"cuelang.org/go/cue/ast"
 	"cuelang.org/go/cue/errors"
@@ -1278,6 +1281,8 @@ func (x *CallExpr) Source() ast.Node {
 
 func (x *CallExpr) evaluate(c *OpContext) Value {
 	fun := c.value(x.Fun)
+	log.Printf("CallExpr.evaluate %T {", fun)
+	defer log.Printf("}")
 	var b *Builtin
 	switch f := fun.(type) {
 	case *Builtin:
@@ -1340,8 +1345,9 @@ func (x *CallExpr) evaluate(c *OpContext) Value {
 type Builtin struct {
 	// TODO:  make these values for better type checking.
 	Params []Param
-	Result Kind
-	Func   func(c *OpContext, args []Value) Expr
+	Result Value
+
+	Func func(c *OpContext, args []Value) Expr
 
 	Package Feature
 	Name    string
@@ -1376,8 +1382,9 @@ func (x *Builtin) Kind() Kind {
 }
 
 func (x *Builtin) BareValidator() *BuiltinValidator {
+	kind := x.Result.Kind()
 	if len(x.Params) != 1 ||
-		(x.Result != BoolKind && x.Result != BottomKind) {
+		(kind != BoolKind && kind != BottomKind) {
 		return nil
 	}
 	return &BuiltinValidator{Builtin: x}
@@ -1386,9 +1393,11 @@ func (x *Builtin) BareValidator() *BuiltinValidator {
 // IsValidator reports whether b should be interpreted as a Validator for the
 // given number of arguments.
 func (b *Builtin) IsValidator(numArgs int) bool {
-	return numArgs == len(b.Params)-1 &&
-		b.Result&^BoolKind == 0 &&
+	isv := numArgs == len(b.Params)-1 &&
+		b.Result.Kind()&^BoolKind == 0 &&
 		b.Params[numArgs].Default() == nil
+	log.Printf("Builtin.IsValidator %s -> %v; callers %s", b.Name, isv, debug.Callers(2, 20))
+	return isv
 }
 
 func bottom(v Value) *Bottom {
@@ -1400,6 +1409,7 @@ func bottom(v Value) *Bottom {
 }
 
 func (x *Builtin) call(c *OpContext, p token.Pos, args []Value) Expr {
+	log.Printf("call to builtin %s.%s (len args %d; len params %d)", x.Package.SelectorString(c), x.Name, len(args), len(x.Params))
 	fun := x // right now always x.
 	if len(args) > len(x.Params) {
 		c.addErrf(0, p,
@@ -1437,10 +1447,15 @@ func (x *Builtin) call(c *OpContext, p token.Pos, args []Value) Expr {
 		}
 		v := x.Params[i].Value
 		if _, ok := v.(*BasicType); !ok {
+			log.Printf("arg %d is not basic type but %T (%s)", i, v, c.Str(v))
+			log.Printf("unifying with %s", c.Str(a))
 			env := c.Env(0)
 			x := &BinaryExpr{Op: AndOp, X: v, Y: a}
 			n := &Vertex{Conjuncts: []Conjunct{{env, x, CloseInfo{}}}}
+			log.Printf("Builtin.call created new vertex %p; %s", n, c.Str(n))
+			log.Printf("unifying new vertex {")
 			c.Unify(n, Finalized)
+			log.Printf("} done unification")
 			if _, ok := n.BaseValue.(*Bottom); ok {
 				c.addErrf(0, pos(a),
 					"cannot use %s as %s in argument %d to %s",
@@ -1484,7 +1499,16 @@ func (x *BuiltinValidator) Kind() Kind {
 	return x.Builtin.Params[0].Kind()
 }
 
+var _i int32
+
 func (x *BuiltinValidator) validate(c *OpContext, v Value) *Bottom {
+	log.Printf("validate %p %#v {", v, v)
+	defer log.Printf("}")
+	log.Printf("validate callers: %s", debug.Callers(2, 20))
+	if atomic.AddInt32(&_i, 1) == 10 {
+		go panic("too much!")
+		select {}
+	}
 	args := make([]Value, len(x.Args)+1)
 	args[0] = v
 	copy(args[1:], x.Args)

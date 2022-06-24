@@ -264,6 +264,9 @@ func (x *TxTarTest) Run(t *testing.T, f func(tc *Test)) {
 			if err != nil {
 				t.Fatalf("error parsing txtar file: %v", err)
 			}
+			if testing.Verbose() {
+				t.Logf("txtar: %v", fullpath)
+			}
 
 			tc := &Test{
 				T:       t,
@@ -335,7 +338,8 @@ func (x *TxTarTest) Run(t *testing.T, f func(tc *Test)) {
 					continue
 				}
 
-				t.Errorf("result for %s differs:\n%s",
+				t.Errorf("%s: result for %s differs: (-want, +got)\n%s",
+					fullpath,
 					sub.name,
 					cmp.Diff(string(gold.Data), string(result)))
 			}

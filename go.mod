@@ -13,6 +13,7 @@ require (
 	github.com/mpvl/unique v0.0.0-20150818121801-cbe035fff7de
 	github.com/protocolbuffers/txtpbfmt v0.0.0-20220428173112-74888fd59c2b
 	github.com/rogpeppe/go-internal v1.8.1
+	github.com/rogpeppe/misc v0.0.0-20220127131711-37e4b992f215
 	github.com/spf13/cobra v1.4.0
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.2.2

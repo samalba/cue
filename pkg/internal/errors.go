@@ -63,7 +63,8 @@ func wrapCallErr(c *CallCtxt, b *adt.Bottom) *adt.Bottom {
 	for _, e := range errors.Errors(b.Err) {
 		const msg = "error in call to %s"
 		err = errors.Append(err,
-			errors.Wrapf(e, c.Pos(), msg, c.builtin.name(c.ctx)))
+			errors.Wrapf(e, c.Pos(), msg, c.Name()),
+		)
 	}
 	return &adt.Bottom{Code: b.Code, Err: err}
 }

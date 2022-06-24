@@ -41,8 +41,8 @@ x: w.d.e
 
 func newGrapher(opCtx *adt.OpContext) *grapher {
 	g := &grapher{
-		visited: make(map[any]bool),
-		nodeIDs: make(map[any]int),
+		visited: make(map[interface{}]bool),
+		nodeIDs: make(map[interface{}]int),
 		opCtx:   opCtx,
 	}
 	g.printf("flowchart TB\n")
@@ -50,14 +50,14 @@ func newGrapher(opCtx *adt.OpContext) *grapher {
 }
 
 type grapher struct {
-	visited map[any]bool
-	nodeIDs map[any]int
+	visited map[interface{}]bool
+	nodeIDs map[interface{}]int
 	buf     bytes.Buffer
 	maxID   int
 	opCtx   *adt.OpContext
 }
 
-func (g *grapher) printf(f string, a ...any) {
+func (g *grapher) printf(f string, a ...interface{}) {
 	fmt.Fprintf(&g.buf, f, a...)
 }
 

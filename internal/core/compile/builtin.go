@@ -33,7 +33,7 @@ var (
 var lenBuiltin = &adt.Builtin{
 	Name:   "len",
 	Params: []adt.Param{{Value: &adt.BasicType{K: supportedByLen}}},
-	Result: adt.IntKind,
+	Result: intParam.Value,
 	Func: func(c *adt.OpContext, args []adt.Value) adt.Expr {
 		v := args[0]
 		if x, ok := v.(*adt.Vertex); ok {
@@ -79,7 +79,7 @@ var lenBuiltin = &adt.Builtin{
 var closeBuiltin = &adt.Builtin{
 	Name:   "close",
 	Params: []adt.Param{structParam},
-	Result: adt.StructKind,
+	Result: structParam.Value,
 	Func: func(c *adt.OpContext, args []adt.Value) adt.Expr {
 		s, ok := args[0].(*adt.Vertex)
 		if !ok {
@@ -99,7 +99,7 @@ var closeBuiltin = &adt.Builtin{
 var andBuiltin = &adt.Builtin{
 	Name:   "and",
 	Params: []adt.Param{listParam},
-	Result: adt.IntKind,
+	Result: intParam.Value,
 	Func: func(c *adt.OpContext, args []adt.Value) adt.Expr {
 		list := c.Elems(args[0])
 		if len(list) == 0 {
@@ -116,7 +116,7 @@ var andBuiltin = &adt.Builtin{
 var orBuiltin = &adt.Builtin{
 	Name:   "or",
 	Params: []adt.Param{listParam},
-	Result: adt.IntKind,
+	Result: intParam.Value,
 	Func: func(c *adt.OpContext, args []adt.Value) adt.Expr {
 		d := []adt.Disjunct{}
 		for _, c := range c.Elems(args[0]) {
@@ -148,7 +148,7 @@ var orBuiltin = &adt.Builtin{
 var divBuiltin = &adt.Builtin{
 	Name:   "div",
 	Params: []adt.Param{intParam, intParam},
-	Result: adt.IntKind,
+	Result: intParam.Value,
 	Func: func(c *adt.OpContext, args []adt.Value) adt.Expr {
 		const name = "argument to div builtin"
 
@@ -159,7 +159,7 @@ var divBuiltin = &adt.Builtin{
 var modBuiltin = &adt.Builtin{
 	Name:   "mod",
 	Params: []adt.Param{intParam, intParam},
-	Result: adt.IntKind,
+	Result: intParam.Value,
 	Func: func(c *adt.OpContext, args []adt.Value) adt.Expr {
 		const name = "argument to mod builtin"
 
@@ -170,7 +170,7 @@ var modBuiltin = &adt.Builtin{
 var quoBuiltin = &adt.Builtin{
 	Name:   "quo",
 	Params: []adt.Param{intParam, intParam},
-	Result: adt.IntKind,
+	Result: intParam.Value,
 	Func: func(c *adt.OpContext, args []adt.Value) adt.Expr {
 		const name = "argument to quo builtin"
 
@@ -181,7 +181,7 @@ var quoBuiltin = &adt.Builtin{
 var remBuiltin = &adt.Builtin{
 	Name:   "rem",
 	Params: []adt.Param{intParam, intParam},
-	Result: adt.IntKind,
+	Result: intParam.Value,
 	Func: func(c *adt.OpContext, args []adt.Value) adt.Expr {
 		const name = "argument to rem builtin"
 

@@ -39,7 +39,7 @@ var Debug bool = os.Getenv("CUE_DEBUG") != "0"
 // Verbosity sets the log level. There are currently only two levels:
 //   0: no logging
 //   1: logging
-var Verbosity int
+var Verbosity int = 1
 
 // DebugSort specifies that arcs be sorted consistently between implementations.
 // 0: default
@@ -136,7 +136,7 @@ func (c *OpContext) Logf(v *Vertex, format string, args ...interface{}) {
 		strings.Repeat("..", c.nest),
 		p,
 		v.Label.SelectorString(c),
-		v.Path(),
+		c.pathStr(v.Path()),
 	}, args...)
 	for i := 2; i < len(a); i++ {
 		switch x := a[i].(type) {
@@ -148,6 +148,14 @@ func (c *OpContext) Logf(v *Vertex, format string, args ...interface{}) {
 	}
 	s := fmt.Sprintf("%s [%d] %s/%v"+format, a...)
 	_ = log.Output(2, s)
+}
+
+func (c *OpContext) pathStr(path []Feature) string {
+	ss := make([]string, len(path))
+	for i, f := range path {
+		ss[i] = f.SelectorString(c)
+	}
+	return strings.Join(ss, ".")
 }
 
 // Runtime defines an interface for low-level representation conversion and
@@ -573,6 +581,8 @@ func (c *OpContext) Evaluate(env *Environment, x Expr) (result Value, complete b
 }
 
 func (c *OpContext) evaluateRec(env *Environment, x Expr, state VertexStatus) Value {
+	log.Printf("evaluateRec %T {", x)
+	defer log.Printf("}")
 	s := c.PushState(env, x.Source())
 
 	val := c.evalState(x, state)
